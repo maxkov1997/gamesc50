@@ -44,6 +44,27 @@ public sealed class Creature
     /// <summary>Флаги способностей у токена (у карты они на экземпляре, 5.3).</summary>
     public List<int> UsedAbilities { get; set; } = new();
 
+    // ----- Только в копии боя (8.1): на постоянном столе всегда по умолчанию и не сериализуются. -----
+
+    /// <summary>Полученный урон. Здоровье = максимальное − урон (8.8).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int Damage { get; set; }
+
+    /// <summary>Усиления «до конца боя».</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int CombatAttack { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int CombatHealth { get; set; }
+
+    /// <summary>Ключевые слова, полученные «до конца боя».</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public List<string>? CombatKeywords { get; set; }
+
+    /// <summary>Ключевые слова, потерянные в бою (потраченный Щит, Перерождение у копии).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public List<string>? RemovedKeywords { get; set; }
+
     /// <summary>Надгробие (8.8): держит позицию, пока разрешается очередь. Вне очереди не бывает.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Tombstone { get; set; }

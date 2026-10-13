@@ -9,25 +9,31 @@ internal sealed class PendingTrigger
     /// <summary>Источник-существо (может уже стать надгробием).</summary>
     public Creature? SourceCreature { get; init; }
 
-    /// <summary>Источник-карта: заклинание или чары на поле.</summary>
+    /// <summary>Источник-карта: заклинание, боевое заклинание, секрет или чары на поле.</summary>
     public int? SourceInstanceId { get; init; }
 
-    /// <summary>null — эффект заклинания, а не способность.</summary>
+    /// <summary>null — эффект карты (заклинание, секрет), а не способность.</summary>
     public AbilityRef? Ability { get; init; }
 
-    public required IReadOnlyList<EffectDef> Effects { get; init; }
+    public IReadOnlyList<EffectDef> Effects { get; init; } = Array.Empty<EffectDef>();
 
-    /// <summary>Триггер срабатывает и после ухода источника со стола: on_death (9.1).</summary>
+    /// <summary>Триггер срабатывает и после ухода источника со стола: on_death и Перерождение (9.1).</summary>
     public bool SurvivesSource { get; init; }
+
+    /// <summary>Перерождение источника (8.8, шаг 2).</summary>
+    public bool IsReborn { get; init; }
 
     public int? Chosen { get; init; }
     public int? EventTarget { get; init; }
     public int? EventAttacker { get; init; }
 }
 
+/// <summary>Изменение «навсегда», сделанное в бою: переносится на оригинал по entityId (8.9).</summary>
+public sealed record PermanentDelta(Side Side, int EntityId, int Attack, int Health, string? Keyword);
+
 /// <summary>
-/// Очередь триггеров и исполнение эффектов (9.1, 8.8, 11.2, 11.3).
-/// В подготовке работает на одной стороне — другую не видит вовсе (5.6).
+/// Очередь триггеров и исполнение эффектов (9.1, 8.7, 8.8, 11.2, 11.3).
+/// В подготовке работает на одной стороне — другую не видит вовсе (5.6). В бою — на копиях обеих сторон.
 /// </summary>
 internal sealed class Resolver
 {
@@ -36,9 +42,19 @@ internal sealed class Resolver
     private readonly PlayerState?[] _sides;
     private readonly Func<Side, IRandom> _rng;
     private readonly Queue<PendingTrigger> _queue = new();
+    private readonly int[] _combatSeq = { 1, 1 };
+    private int _resolved;
 
     public Phase Phase { get; }
     public List<GameEvent> Events { get; }
+
+    /// <summary>Активная сторона (глоссарий): её смерти и триггеры идут первыми.</summary>
+    public Side ActiveSide { get; set; }
+
+    /// <summary>В бою превышен MAX_TRIGGERS — бой заканчивается ничьей limit (8.10).</summary>
+    public bool LimitReached { get; private set; }
+
+    public List<PermanentDelta> PermanentDeltas { get; } = new();
 
     private delegate void OpHandler(Resolver r, PendingTrigger t, EffectDef e);
 
@@ -47,6 +63,7 @@ internal sealed class Resolver
     {
         [Registry.Ops.Buff] = (r, t, e) => r.OpBuff(t, e),
         [Registry.Ops.GiveKeyword] = (r, t, e) => r.OpGiveKeyword(t, e),
+        [Registry.Ops.Damage] = (r, t, e) => r.OpDamage(t, e),
         [Registry.Ops.Destroy] = (r, t, e) => r.OpDestroy(t, e),
         [Registry.Ops.Summon] = (r, t, e) => r.OpSummon(t, e),
         [Registry.Ops.Draw] = (r, t, e) => r.OpDraw(t, e),
@@ -70,13 +87,20 @@ internal sealed class Resolver
         var sides = new PlayerState?[2];
         sides[(int)side] = state.Player(side);
         var rng = state.Rng(side);
-        return new Resolver(db, state.Config, Phase.Planning, sides, _ => rng, events);
+        return new Resolver(db, state.Config, Phase.Planning, sides, _ => rng, events) { ActiveSide = side };
     }
 
-    private PlayerState Side(Side side) =>
+    public PlayerState Side(Side side) =>
         _sides[(int)side] ?? throw new InvalidOperationException($"Сторона {side} недоступна в подготовке противника (5.6)");
 
-    private static Side Other(Side s) => s == Core.Side.A ? Core.Side.B : Core.Side.A;
+    public static Side Other(Side s) => s == Core.Side.A ? Core.Side.B : Core.Side.A;
+
+    /// <summary>Стороны в порядке приоритета: активная, затем другая (9.2).</summary>
+    private IEnumerable<Side> SidesInOrder()
+    {
+        foreach (var s in new[] { ActiveSide, Other(ActiveSide) })
+            if (_sides[(int)s] != null) yield return s;
+    }
 
     public void Enqueue(PendingTrigger t) => _queue.Enqueue(t);
 
@@ -84,7 +108,7 @@ internal sealed class Resolver
     /// Поставить в очередь способности с триггером trigger в порядке 9.2:
     /// поле чар по слотам → существа слева направо (свои способности, затем от чар).
     /// </summary>
-    public void EnqueueSideTriggers(Side side, string trigger, int? eventTarget = null, Creature? except = null)
+    public void EnqueueSideTriggers(Side side, string trigger, int? eventTarget = null)
     {
         var p = Side(side);
         foreach (var slot in p.Field)
@@ -103,10 +127,7 @@ internal sealed class Resolver
             }
         }
         foreach (var c in p.Alive.ToList())
-        {
-            if (ReferenceEquals(c, except)) continue;
             EnqueueCreatureTriggers(side, c, trigger, eventTarget: eventTarget);
-        }
     }
 
     public void EnqueueCreatureTriggers(Side side, Creature c, string trigger, int? chosen = null, int? eventTarget = null, bool survives = false)
@@ -122,24 +143,27 @@ internal sealed class Resolver
         }
     }
 
-    /// <summary>разрешить_очередь() (9.1).</summary>
+    /// <summary>
+    /// разрешить_очередь() (9.1). Предел MAX_TRIGGERS: в подготовке — на одно действие (лишние отбрасываются),
+    /// в бою — на весь бой (бой кончается ничьей limit).
+    /// </summary>
     public void Run()
     {
-        int resolved = 0;
+        if (Phase == Phase.Planning) _resolved = 0;
         ProcessDeaths();
-        while (_queue.Count > 0)
+        while (_queue.Count > 0 && !LimitReached)
         {
             var t = _queue.Dequeue();
             if (SourceLeft(t)) continue;
             Resolve(t);
             ProcessDeaths();
-            resolved++;
-            if (resolved > _config.MaxTriggers)
+            _resolved++;
+            if (_resolved > _config.MaxTriggers)
             {
-                // 9.1: в подготовке оставшиеся триггеры отбрасываются, в лог — warning.
                 _queue.Clear();
-                Events.Add(new GameEvent { Type = EventTypes.Warning, Text = $"превышен предел MAX_TRIGGERS ({_config.MaxTriggers}) за одно действие" });
-                break;
+                if (Phase == Phase.Combat) LimitReached = true;
+                string where = Phase == Phase.Combat ? "за бой" : "за одно действие";
+                Events.Add(new GameEvent { Type = EventTypes.Warning, Text = $"превышен предел MAX_TRIGGERS ({_config.MaxTriggers}) {where}" });
             }
         }
         foreach (var p in _sides)
@@ -154,6 +178,11 @@ internal sealed class Resolver
 
     private void Resolve(PendingTrigger t)
     {
+        if (t.IsReborn)
+        {
+            ResolveReborn(t);
+            return;
+        }
         if (t.Ability != null)
         {
             Events.Add(new GameEvent
@@ -166,28 +195,32 @@ internal sealed class Resolver
         foreach (var e in t.Effects)
         {
             if (!Handlers.TryGetValue(e.Op, out var handler))
-                throw new InvalidOperationException($"Операция «{e.Op}» не реализована для фазы {Phase}");
+                throw new InvalidOperationException($"Операция «{e.Op}» не реализована");
             handler(this, t, e);
         }
     }
 
     // ---------- Смерть (8.8) ----------
 
+    private bool IsDying(Creature c) =>
+        c.MarkedForDestroy || (Phase == Phase.Combat && Stats.Health(_db, c) <= 0);
+
     private void ProcessDeaths()
     {
         while (true)
         {
-            var dead = new List<(Side Side, Creature C, List<AbilityRef> Abilities)>();
-            foreach (var side in new[] { Core.Side.A, Core.Side.B })
+            // Порядок: активная сторона, затем другая; внутри стороны слева направо.
+            var dead = new List<(Side Side, Creature C, List<AbilityRef> Abilities, bool Reborn)>();
+            foreach (var side in SidesInOrder())
             {
-                var p = _sides[(int)side];
-                if (p == null) continue;
+                var p = Side(side);
                 foreach (var c in p.Alive)
-                    if (c.MarkedForDestroy) dead.Add((side, c, Stats.Abilities(_db, p, c)));
+                    if (IsDying(c))
+                        dead.Add((side, c, Stats.Abilities(_db, p, c), Stats.HasKeyword(_db, p, c, Registry.Keywords.Reborn)));
             }
             if (dead.Count == 0) return;
 
-            foreach (var (side, c, _) in dead)
+            foreach (var (side, c, _, _) in dead)
             {
                 var p = Side(side);
                 int position = AliveIndex(p, c);
@@ -196,7 +229,7 @@ internal sealed class Resolver
                 Events.Add(new GameEvent { Type = EventTypes.Died, Side = side, EntityId = c.EntityId, CardId = c.CardId, Position = position });
             }
 
-            foreach (var (side, c, abilities) in dead)
+            foreach (var (side, c, abilities, reborn) in dead)
             {
                 // 1. «Посмертно», включая полученные от чар — их список снят до ухода чар в сброс.
                 foreach (var a in abilities)
@@ -208,16 +241,44 @@ internal sealed class Resolver
                         Effects = a.Ability.Effects, SurvivesSource = true,
                     });
                 }
+                // 2. Перерождение — только в бою.
+                if (Phase == Phase.Combat && reborn)
+                    Enqueue(new PendingTrigger { Side = side, SourceCardId = c.CardId, SourceCreature = c, SurvivesSource = true, IsReborn = true });
+
                 // 3. «Когда умирает союзник»: чары на поле, затем живые союзники.
                 EnqueueSideTriggers(side, Registry.Triggers.FriendlyDied, eventTarget: c.EntityId);
 
-                // 8.8: в подготовке погибшее существо уходит в сброс (токен исчезает), чары с него — в сброс.
+                // В подготовке погибшее существо уходит в сброс (токен исчезает), чары с него — в сброс.
+                // В бою погибает только копия.
                 if (Phase == Phase.Planning) Zones.DiscardCreature(Side(side), c);
             }
         }
     }
 
-    private static int AliveIndex(PlayerState p, Creature c)
+    /// <summary>Перерождение: базовая копия карты без усилений и без Перерождения, здоровье 1, на месте погибшего.</summary>
+    private void ResolveReborn(PendingTrigger t)
+    {
+        var p = Side(t.Side);
+        var original = t.SourceCreature!;
+        int index = p.Board.IndexOf(original);
+        // GDD-QUESTION: Перерождение на полном столе не происходит и даёт summon_failed, как призыв (Q9).
+        if (index < 0 || p.AliveCount >= _config.BoardSize)
+        {
+            Events.Add(new GameEvent { Type = EventTypes.SummonFailed, Side = p.Side, CardId = original.CardId, Reason = "board_full" });
+            return;
+        }
+        var c = NewEntity(p, original.CardId);
+        c.RemovedKeywords = new List<string> { Registry.Keywords.Reborn };
+        c.Damage = Stats.MaxHealth(_db, c) - 1;
+        p.Board.Insert(index, c);
+        Events.Add(new GameEvent
+        {
+            Type = EventTypes.Reborn, Side = p.Side, EntityId = c.EntityId, SourceEntityId = original.EntityId,
+            Position = AliveIndex(p, c), Creature = CreatureView.Of(_db, p, c),
+        });
+    }
+
+    public static int AliveIndex(PlayerState p, Creature c)
     {
         int index = 0;
         foreach (var x in p.Board)
@@ -226,6 +287,41 @@ internal sealed class Resolver
             if (x.IsAlive) index++;
         }
         return index;
+    }
+
+    /// <summary>
+    /// Новая сущность. В подготовке — постоянный id стороны; в бою — из отдельного отрицательного диапазона (4.1),
+    /// поэтому у неё нет оригинала и её изменения «навсегда» теряются (8.9).
+    /// </summary>
+    private Creature NewEntity(PlayerState p, string cardId)
+    {
+        if (Phase == Phase.Planning) return Entities.NewCreature(p, cardId, null);
+        int id = -(_combatSeq[(int)p.Side]++ * 2 + (int)p.Side);
+        return new Creature { EntityId = id, CardId = cardId };
+    }
+
+    // ---------- Урон (8.7) ----------
+
+    /// <summary>нанести_урон(источник, цель, x). source == null — урон «без источника», Яд к нему не применяется.</summary>
+    public void Deal(Creature? source, Creature target, int amount)
+    {
+        if (amount <= 0) return;
+        var tp = OwnerOf(target);
+        if (Stats.HasKeyword(_db, tp, target, Registry.Keywords.Shield))
+        {
+            (target.RemovedKeywords ??= new List<string>()).Add(Registry.Keywords.Shield);
+            Events.Add(new GameEvent { Type = EventTypes.ShieldBroken, Side = tp.Side, EntityId = target.EntityId });
+            return;
+        }
+        target.Damage += amount;
+        Events.Add(new GameEvent
+        {
+            Type = EventTypes.Damage, Side = tp.Side, SourceEntityId = source?.EntityId, Target = target.EntityId,
+            Amount = amount, Health = Stats.Health(_db, target),
+        });
+        if (source != null && Stats.HasKeyword(_db, OwnerOf(source), source, Registry.Keywords.Poison))
+            target.MarkedForDestroy = true;
+        EnqueueCreatureTriggers(tp.Side, target, Registry.Triggers.AfterDamaged);
     }
 
     // ---------- Селекторы (11.3, 9.3) ----------
@@ -261,7 +357,7 @@ internal sealed class Resolver
         return null;
     }
 
-    private PlayerState OwnerOf(Creature c)
+    public PlayerState OwnerOf(Creature c)
     {
         foreach (var p in _sides)
             if (p != null && p.Board.Contains(c)) return p;
@@ -277,33 +373,70 @@ internal sealed class Resolver
             Attack = Stats.Attack(_db, p, c), Health = Stats.Health(_db, c), Duration = duration,
         });
 
+    /// <summary>7.3: эффекты подготовки — всегда навсегда; эффекты боя — до конца боя, если не сказано «навсегда».</summary>
     private string DurationOf(EffectDef e) =>
         Phase == Phase.Planning ? Registry.Durations.Permanent : e.Duration ?? Registry.Durations.Combat;
+
+    /// <summary>Изменение «навсегда» в бою: применяется к копии сразу и записывается для переноса (7.3).</summary>
+    private void RecordPermanent(PlayerState p, Creature c, int attack, int health, string? keyword)
+    {
+        if (Phase == Phase.Combat && c.EntityId > 0)
+            PermanentDeltas.Add(new PermanentDelta(p.Side, c.EntityId, attack, health, keyword));
+    }
 
     private void OpBuff(PendingTrigger t, EffectDef e)
     {
         string duration = DurationOf(e);
+        int attack = e.Attack ?? 0, health = e.Health ?? 0;
         foreach (var c in Select(t, e.Target!))
         {
-            c.BonusAttack += e.Attack ?? 0;
-            c.BonusHealth += e.Health ?? 0;
-            StatsChanged(OwnerOf(c), c, duration);
+            var p = OwnerOf(c);
+            if (duration == Registry.Durations.Permanent)
+            {
+                c.BonusAttack += attack;
+                c.BonusHealth += health;
+                RecordPermanent(p, c, attack, health, null);
+            }
+            else
+            {
+                c.CombatAttack += attack;
+                c.CombatHealth += health;
+            }
+            StatsChanged(p, c, duration);
         }
     }
 
     private void OpGiveKeyword(PendingTrigger t, EffectDef e)
     {
         string duration = DurationOf(e);
+        string keyword = e.Keyword!;
         foreach (var c in Select(t, e.Target!))
         {
-            if (c.GainedKeywords.Contains(e.Keyword!)) continue;
-            c.GainedKeywords.Add(e.Keyword!);
+            var p = OwnerOf(c);
+            // Снова полученное слово возвращается, даже если было потеряно в этом бою (например, Щит).
+            c.RemovedKeywords?.Remove(keyword);
+            if (duration == Registry.Durations.Permanent)
+            {
+                if (!c.GainedKeywords.Contains(keyword)) c.GainedKeywords.Add(keyword);
+                RecordPermanent(p, c, 0, 0, keyword);
+            }
+            else
+            {
+                c.CombatKeywords ??= new List<string>();
+                if (!c.CombatKeywords.Contains(keyword)) c.CombatKeywords.Add(keyword);
+            }
             Events.Add(new GameEvent
             {
-                Type = EventTypes.KeywordChanged, Side = OwnerOf(c).Side, EntityId = c.EntityId,
-                Keyword = e.Keyword, Gained = true, Duration = duration,
+                Type = EventTypes.KeywordChanged, Side = p.Side, EntityId = c.EntityId,
+                Keyword = keyword, Gained = true, Duration = duration,
             });
         }
+    }
+
+    private void OpDamage(PendingTrigger t, EffectDef e)
+    {
+        // 11.2: источник — владелец эффекта, если это существо, иначе «без источника».
+        foreach (var c in Select(t, e.Target!)) Deal(t.SourceCreature, c, e.Amount!.Value);
     }
 
     private void OpDestroy(PendingTrigger t, EffectDef e)
@@ -324,6 +457,7 @@ internal sealed class Resolver
             if (source == null) continue;
             source.BonusAttack += attack;
             source.BonusHealth += health;
+            RecordPermanent(owner, source, attack, health, null);
             StatsChanged(owner, source, Registry.Durations.Permanent);
         }
     }
@@ -345,13 +479,13 @@ internal sealed class Resolver
                 Events.Add(new GameEvent { Type = EventTypes.SummonFailed, Side = p.Side, CardId = def.Id, Reason = "board_full" });
                 continue;
             }
-            var c = Entities.NewCreature(p, def.Id, null);
+            var c = NewEntity(p, def.Id);
             p.Board.Insert(index, c);
             index++;
             Events.Add(new GameEvent
             {
                 Type = EventTypes.CreatureSummoned, Side = p.Side, EntityId = c.EntityId, CardId = c.CardId,
-                Attack = Stats.Attack(_db, p, c), Health = Stats.Health(_db, c), Position = AliveIndex(p, c),
+                Position = AliveIndex(p, c), Creature = CreatureView.Of(_db, p, c),
                 SourceEntityId = t.SourceCreature?.EntityId, SourceInstanceId = t.SourceInstanceId,
             });
         }

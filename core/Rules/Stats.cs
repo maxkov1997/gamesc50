@@ -26,16 +26,16 @@ public static class Stats
 
     public static int Attack(CardDatabase db, PlayerState p, Creature c)
     {
-        int attack = db.Get(c.CardId).Attack + c.BonusAttack;
+        int attack = db.Get(c.CardId).Attack + c.BonusAttack + c.CombatAttack;
         foreach (var g in Grants(db, p, c)) attack += g.Attack;
         foreach (var aura in AurasOn(db, p, c)) attack += aura.Attack;
         return attack;
     }
 
-    public static int MaxHealth(CardDatabase db, Creature c) => db.Get(c.CardId).Health + c.BonusHealth;
+    public static int MaxHealth(CardDatabase db, Creature c) => db.Get(c.CardId).Health + c.BonusHealth + c.CombatHealth;
 
-    /// <summary>В подготовке существо всегда с полным здоровьем (6).</summary>
-    public static int Health(CardDatabase db, Creature c) => MaxHealth(db, c);
+    /// <summary>Здоровье = максимальное − урон. Урон бывает только в бою: в подготовке здоровье полное (6).</summary>
+    public static int Health(CardDatabase db, Creature c) => MaxHealth(db, c) - c.Damage;
 
     /// <summary>Ключевые слова: база, полученные, от чар, от аур — без повторов, в порядке появления.</summary>
     public static List<string> Keywords(CardDatabase db, PlayerState p, Creature c)
@@ -43,7 +43,7 @@ public static class Stats
         var result = OwnKeywords(db, p, c);
         foreach (var aura in AurasOn(db, p, c))
             foreach (var k in aura.Keywords)
-                if (!result.Contains(k)) result.Add(k);
+                if (!result.Contains(k) && !(c.RemovedKeywords?.Contains(k) ?? false)) result.Add(k);
         return result;
     }
 
@@ -60,7 +60,9 @@ public static class Stats
         }
         Add(db.Get(c.CardId).Keywords);
         Add(c.GainedKeywords);
+        if (c.CombatKeywords != null) Add(c.CombatKeywords);
         foreach (var g in Grants(db, p, c)) Add(g.Keywords);
+        if (c.RemovedKeywords != null) result.RemoveAll(c.RemovedKeywords.Contains);
         return result;
     }
 

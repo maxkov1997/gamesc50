@@ -95,6 +95,56 @@ public sealed class GameRules
         return events;
     }
 
+    // ---------- Бой (8) ----------
+
+    /// <summary>simulateCombat(snapshot, seed): чистая функция; RNG — поток combat[round] от seed матча (раздел 10).</summary>
+    public CombatResult SimulateCombat(CombatSnapshot snapshot, ulong matchSeed) =>
+        new CombatEngine(_db, snapshot, RngStreams.CombatStream(matchSeed, snapshot.Round)).Run();
+
+    /// <summary>runCombat(state): снимок → simulateCombat → применение итога (8.9).</summary>
+    public List<GameEvent> RunCombat(MatchState state)
+    {
+        RequireStage(state, RoundStage.Planning, "начать бой");
+        if (state.Players.Any(p => !p.IsReady))
+            throw new InvalidOperationException("Бой начинается, когда обе стороны нажали «Готов»");
+
+        var result = SimulateCombat(Combat.Snapshot(state), state.Seed);
+        var events = new List<GameEvent>(result.Events);
+
+        if (result.DamagedSide is Side damaged)
+            state.Player(damaged).HeroHp -= result.HeroDamage;
+
+        // Перенос изменений «навсегда» на оригиналы по entityId.
+        foreach (var d in result.PermanentDeltas)
+        {
+            var p = state.Player(d.Side);
+            var c = p.Board.FirstOrDefault(x => x.EntityId == d.EntityId);
+            if (c == null) continue;
+            c.BonusAttack += d.Attack;
+            c.BonusHealth += d.Health;
+            if (d.Keyword != null && !c.GainedKeywords.Contains(d.Keyword)) c.GainedKeywords.Add(d.Keyword);
+            events.Add(new GameEvent
+            {
+                Type = EventTypes.PermanentApplied, Side = d.Side, EntityId = d.EntityId,
+                Attack = Stats.Attack(_db, p, c), Health = Stats.Health(_db, c), Keyword = d.Keyword,
+            });
+        }
+
+        state.Stage = RoundStage.CombatDone;
+
+        // 4.4: герой с HP ≤ 0 проигрывает; оба — ничья.
+        bool deadA = state.Player(Side.A).HeroHp <= 0, deadB = state.Player(Side.B).HeroHp <= 0;
+        if (deadA || deadB)
+        {
+            state.Result = deadA && deadB ? Outcome.Draw : deadA ? Outcome.B : Outcome.A;
+            state.Stage = RoundStage.MatchOver;
+            events.Add(new GameEvent { Type = EventTypes.MatchEnded, Result = state.Result });
+        }
+
+        state.Log.AddRange(events);
+        return events;
+    }
+
     private static void RequireStage(MatchState state, RoundStage stage, string what)
     {
         if (state.Stage != stage)

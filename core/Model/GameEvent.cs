@@ -49,6 +49,7 @@ public sealed class GameEvent
     public int? EntityId { get; set; }
     public string? CardId { get; set; }
     public int? Count { get; set; }
+    public int? Amount { get; set; }
 
     /// <summary>Цель: entityId (выбранная, атакованная, получившая урон).</summary>
     public int? Target { get; set; }
@@ -73,6 +74,12 @@ public sealed class GameEvent
 
     /// <summary>Мана сторон для round_started: [A, B].</summary>
     public List<int>? Mana { get; set; }
+
+    /// <summary>Снимок сущности (creature_summoned, reborn).</summary>
+    public CreatureView? Creature { get; set; }
+
+    /// <summary>Снимок обеих сторон (combat_started).</summary>
+    public List<SideView>? Sides { get; set; }
 
     public Outcome? Result { get; set; }
     public string? Reason { get; set; }

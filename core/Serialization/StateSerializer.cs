@@ -34,4 +34,11 @@ public static class StateSerializer
 
     public static string SerializeEvents(IEnumerable<GameEvent> events) =>
         JsonSerializer.Serialize(events, Options);
+
+    public static string SerializeSnapshot(CombatSnapshot snapshot) => JsonSerializer.Serialize(snapshot, Options);
+
+    /// <summary>Глубокая копия через JSON — для снимка боя (8.1).</summary>
+    public static T Clone<T>(T value) =>
+        JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(value, Options), Options)
+        ?? throw new JsonException("Пустая копия");
 }
