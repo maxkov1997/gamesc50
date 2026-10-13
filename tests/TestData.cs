@@ -13,4 +13,12 @@ public static class TestData
     public static GameData Data => Lazy.Value;
 
     public static string ReadContent(string relative) => File.ReadAllText(Path.Combine(ContentDir, relative));
+
+    /// <summary>Стартовый набор плюс синтетические карты, описанные в тесте (раздел 13).</summary>
+    public static GameData WithExtraCards(string extraCardsJson)
+    {
+        string cards = ReadContent(ContentLoader.CardsFile).TrimEnd();
+        cards = cards[..^1] + "," + extraCardsJson + "]";
+        return new GameData { Config = Data.Config, Cards = ContentLoader.LoadCards(cards), Decks = Data.Decks };
+    }
 }

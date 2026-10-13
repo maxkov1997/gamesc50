@@ -50,6 +50,33 @@ public sealed class GameEvent
     public string? CardId { get; set; }
     public int? Count { get; set; }
 
+    /// <summary>Цель: entityId (выбранная, атакованная, получившая урон).</summary>
+    public int? Target { get; set; }
+    public int? Position { get; set; }
+    public int? FromIndex { get; set; }
+    public int? ToIndex { get; set; }
+    public int? Slot { get; set; }
+    public int? ManaAfter { get; set; }
+    public int? AbilityIndex { get; set; }
+    public string? Trigger { get; set; }
+
+    /// <summary>Значения после изменения (12.3).</summary>
+    public int? Attack { get; set; }
+    public int? Health { get; set; }
+    public string? Duration { get; set; }
+    public string? Keyword { get; set; }
+    public bool? Gained { get; set; }
+
+    /// <summary>Источник эффекта: сущность или экземпляр карты (чары на поле, заклинание).</summary>
+    public int? SourceEntityId { get; set; }
+    public int? SourceInstanceId { get; set; }
+
+    /// <summary>Мана сторон для round_started: [A, B].</summary>
+    public List<int>? Mana { get; set; }
+
+    public Outcome? Result { get; set; }
+    public string? Reason { get; set; }
+
     // match_started
     public ulong? Seed { get; set; }
     public PlanningMode? Mode { get; set; }

@@ -1,6 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace Game.Core;
 
 public enum Side { A = 0, B = 1 }
+
+/// <summary>Где матч внутри раунда (4.3).</summary>
+public enum RoundStage { Idle, Planning, CombatDone, MatchOver }
 
 public enum PlanningMode { OpponentFirst, Simultaneous }
 
@@ -38,6 +43,17 @@ public sealed class Creature
 
     /// <summary>Флаги способностей у токена (у карты они на экземпляре, 5.3).</summary>
     public List<int> UsedAbilities { get; set; } = new();
+
+    /// <summary>Надгробие (8.8): держит позицию, пока разрешается очередь. Вне очереди не бывает.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool Tombstone { get; set; }
+
+    /// <summary>Пометка «уничтожить» (destroy, Яд). Вне очереди не бывает.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool MarkedForDestroy { get; set; }
+
+    [JsonIgnore]
+    public bool IsAlive => !Tombstone;
 }
 
 /// <summary>Состояние стороны (4.1). Списки зон хранят instanceId.</summary>
@@ -71,6 +87,15 @@ public sealed class PlayerState
 
     public bool IsReady { get; set; }
 
+    /// <summary>Счётчик для entityId этой стороны (Entities.NewCreature). Свой у каждой стороны — изоляция 5.6.</summary>
+    public int NextEntitySeq { get; set; } = 1;
+
+    public IEnumerable<Creature> Alive => Board.Where(c => c.IsAlive);
+
+    public int AliveCount => Board.Count(c => c.IsAlive);
+
+    public Creature? FindAlive(int entityId) => Board.FirstOrDefault(c => c.IsAlive && c.EntityId == entityId);
+
     public CardInstance GetInstance(int instanceId) =>
         Instances.FirstOrDefault(i => i.InstanceId == instanceId)
         ?? throw new KeyNotFoundException($"У стороны {Side} нет экземпляра {instanceId}");
@@ -83,6 +108,7 @@ public sealed class MatchState
     public PlanningMode Mode { get; set; }
     public GameConfig Config { get; set; } = new();
     public int Round { get; set; }
+    public RoundStage Stage { get; set; } = RoundStage.Idle;
 
     /// <summary>Стороны: индекс 0 — A, 1 — B.</summary>
     public List<PlayerState> Players { get; set; } = new();
@@ -91,7 +117,6 @@ public sealed class MatchState
     public List<Pcg32> PlanningRng { get; set; } = new();
 
     public int NextInstanceId { get; set; } = 1;
-    public int NextEntityId { get; set; } = 1;
 
     public Outcome? Result { get; set; }
 

@@ -139,6 +139,9 @@ internal sealed class CardValidator
 
     private void ValidateAbilities(IReadOnlyList<AbilityDef> abilities, string path, Owner owner, int cardCost)
     {
+        // Действие PlayCard несёт одну цель (12.2) — значит, и «При розыгрыше» с выбором цели у карты не больше одного.
+        if (abilities.Count(a => a.Trigger == Registry.Triggers.OnPlay && a.Target != null) > 1)
+            Err(ErrorCodes.ContentRule, path, "у карты больше одного «При розыгрыше» с выбором цели");
         for (int i = 0; i < abilities.Count; i++)
         {
             var a = abilities[i];
@@ -188,6 +191,10 @@ internal sealed class CardValidator
 
     private void ValidateAura(AuraDef aura, string path, bool creatureSource)
     {
+        // 7.4: значение ауры пересчитывается при каждом чтении — выбор не может быть случайным
+        // и не может ссылаться на участников события.
+        if (aura.Target.Pick == Registry.Picks.Random || (aura.Target.IsRef && aura.Target.Ref != Registry.Refs.Self))
+            Err(ErrorCodes.ContentRule, $"{path}.target", "цель ауры — только неслучайный выбор или «self»");
         ValidateSelector(aura.Target, $"{path}.target",
             new EffectContext(Phase.Both, creatureSource, false, null, false));
         ValidateKeywords(aura.Keywords, $"{path}.keywords", k => k.ForCreatures, "существа");
