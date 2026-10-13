@@ -1,0 +1,9 @@
+{
+  "id": "pack",
+  "name": "Стая",
+  "cards": [
+    "ferret", "apprentice", "venom_toad", "watchdog", "wolf",
+    "harpy", "iron_boar", "pack_leader", "blessing_of_might", "tempering",
+    "holy_veil", "war_hymn", "mirror_shield", "riposte", "sanctuary"
+  ]
+}

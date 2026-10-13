@@ -1,0 +1,312 @@
+[
+  {
+    "id": "gate_guard", "name": "Страж ворот", "type": "creature",
+    "cost": 1, "attack": 1, "health": 3, "keywords": ["taunt"],
+    "text": "Провокация."
+  },
+  {
+    "id": "ferret", "name": "Рыжий хорёк", "type": "creature",
+    "cost": 1, "attack": 2, "health": 1, "tags": ["beast"],
+    "text": ""
+  },
+  {
+    "id": "candle_spirit", "name": "Свечной дух", "type": "creature",
+    "cost": 1, "attack": 1, "health": 1, "tags": ["spirit"],
+    "abilities": [
+      { "trigger": "on_death",
+        "effects": [{ "op": "summon", "card": "tok_spark", "count": 1, "at": "death_position" }] }
+    ],
+    "text": "Посмертно: призовите Искорку."
+  },
+  {
+    "id": "apprentice", "name": "Подмастерье", "type": "creature",
+    "cost": 1, "attack": 1, "health": 2,
+    "abilities": [
+      { "trigger": "on_play", "target": { "side": "friendly", "not_self": true },
+        "effects": [{ "op": "buff", "target": "chosen", "attack": 1, "health": 1 }] }
+    ],
+    "text": "При розыгрыше: дайте другому союзному существу +1/+1."
+  },
+  {
+    "id": "shieldbearer", "name": "Щитоносец", "type": "creature",
+    "cost": 2, "attack": 2, "health": 2, "keywords": ["shield"],
+    "text": "Щит."
+  },
+  {
+    "id": "venom_toad", "name": "Ядовитая жаба", "type": "creature",
+    "cost": 2, "attack": 1, "health": 2, "tags": ["beast"], "keywords": ["poison"],
+    "text": "Яд."
+  },
+  {
+    "id": "bone_servant", "name": "Костяной слуга", "type": "creature",
+    "cost": 2, "attack": 2, "health": 1, "tags": ["undead"], "keywords": ["reborn"],
+    "text": "Перерождение."
+  },
+  {
+    "id": "watchdog", "name": "Сторожевой пёс", "type": "creature",
+    "cost": 2, "attack": 2, "health": 3, "tags": ["beast"],
+    "abilities": [
+      { "trigger": "avenge", "count": 2,
+        "effects": [{ "op": "buff", "target": "self", "attack": 1, "health": 1, "duration": "permanent" }] }
+    ],
+    "text": "Возмездие (2): получает +1/+1 навсегда."
+  },
+  {
+    "id": "tinkerer", "name": "Механик-самоучка", "type": "creature",
+    "cost": 2, "attack": 2, "health": 2, "tags": ["mech"],
+    "abilities": [
+      { "trigger": "activated", "cost": 1,
+        "target": { "side": "friendly", "tag": "mech", "not_self": true },
+        "effects": [{ "op": "buff", "target": "chosen", "attack": 1, "health": 1 }] }
+    ],
+    "text": "Способность (1): дайте другому вашему Механизму +1/+1. Раз в раунд."
+  },
+  {
+    "id": "stone_wall", "name": "Каменная стена", "type": "creature",
+    "cost": 2, "attack": 0, "health": 5, "keywords": ["taunt"],
+    "text": "Провокация."
+  },
+  {
+    "id": "wolf", "name": "Матёрый волк", "type": "creature",
+    "cost": 2, "attack": 2, "health": 2, "tags": ["beast"],
+    "abilities": [
+      { "trigger": "on_attack",
+        "effects": [{ "op": "buff", "target": "self", "attack": 1 }] }
+    ],
+    "text": "Когда атакует: получает +1 к атаке до конца боя."
+  },
+  {
+    "id": "mourner", "name": "Плакальщица", "type": "creature",
+    "cost": 2, "attack": 1, "health": 3, "tags": ["undead"],
+    "abilities": [
+      { "trigger": "friendly_died",
+        "effects": [{ "op": "buff", "target": "self", "attack": 1, "health": 1 }] }
+    ],
+    "text": "Когда умирает другой ваш союзник: получает +1/+1."
+  },
+  {
+    "id": "harpy", "name": "Гарпия", "type": "creature",
+    "cost": 3, "attack": 3, "health": 2, "tags": ["beast"], "keywords": ["flying"],
+    "text": "Полёт."
+  },
+  {
+    "id": "axeman", "name": "Секироносец", "type": "creature",
+    "cost": 3, "attack": 2, "health": 4, "keywords": ["cleave"],
+    "text": "Рассечение."
+  },
+  {
+    "id": "whirlblade", "name": "Вихревой клинок", "type": "creature",
+    "cost": 3, "attack": 2, "health": 3, "keywords": ["double_attack"],
+    "text": "Двойная атака."
+  },
+  {
+    "id": "gravekeeper", "name": "Кладбищенский сторож", "type": "creature",
+    "cost": 3, "attack": 2, "health": 3, "tags": ["undead"],
+    "abilities": [
+      { "trigger": "on_death",
+        "effects": [{ "op": "summon", "card": "tok_skeleton", "count": 2, "at": "death_position" }] }
+    ],
+    "text": "Посмертно: призовите двух Скелетов."
+  },
+  {
+    "id": "scavenger", "name": "Сборщик хлама", "type": "creature",
+    "cost": 3, "attack": 3, "health": 3, "tags": ["mech"],
+    "abilities": [
+      { "trigger": "on_play",
+        "effects": [{ "op": "draw", "count": 1 }] }
+    ],
+    "text": "При розыгрыше: возьмите карту."
+  },
+  {
+    "id": "wind_up_soldier", "name": "Заводной солдат", "type": "creature",
+    "cost": 3, "attack": 2, "health": 2, "tags": ["mech"],
+    "abilities": [
+      { "trigger": "round_start",
+        "effects": [{ "op": "buff", "target": "self", "attack": 1, "health": 1 }] }
+    ],
+    "text": "В начале раунда: получает +1/+1."
+  },
+  {
+    "id": "battle_mage", "name": "Боевой маг", "type": "creature",
+    "cost": 4, "attack": 3, "health": 4,
+    "abilities": [
+      { "trigger": "start_of_combat",
+        "effects": [{ "op": "damage", "target": { "pick": "random", "side": "enemy", "count": 1 }, "amount": 3 }] }
+    ],
+    "text": "Начало боя: нанесите 3 урона случайному существу противника."
+  },
+  {
+    "id": "iron_boar", "name": "Броневепрь", "type": "creature",
+    "cost": 4, "attack": 3, "health": 6, "tags": ["beast"], "keywords": ["taunt"],
+    "text": "Провокация."
+  },
+  {
+    "id": "pack_leader", "name": "Вожак стаи", "type": "creature",
+    "cost": 4, "attack": 3, "health": 4, "tags": ["beast"],
+    "abilities": [
+      { "trigger": "aura",
+        "aura": { "target": { "pick": "all", "side": "friendly", "tag": "beast", "not_self": true }, "attack": 1 } }
+    ],
+    "text": "Ваши другие Звери имеют +1 к атаке."
+  },
+  {
+    "id": "berserker", "name": "Берсерк", "type": "creature",
+    "cost": 4, "attack": 3, "health": 5,
+    "abilities": [
+      { "trigger": "after_damaged",
+        "effects": [{ "op": "buff", "target": "self", "attack": 2 }] }
+    ],
+    "text": "После урона: получает +2 к атаке."
+  },
+  {
+    "id": "dawn_knight", "name": "Рыцарь зари", "type": "creature",
+    "cost": 5, "attack": 4, "health": 5, "keywords": ["shield", "taunt"],
+    "text": "Щит, Провокация."
+  },
+  {
+    "id": "scrap_golem", "name": "Голем из лома", "type": "creature",
+    "cost": 5, "attack": 5, "health": 5, "tags": ["mech"],
+    "abilities": [
+      { "trigger": "on_death",
+        "effects": [{ "op": "summon", "card": "tok_gear", "count": 1, "at": "death_position" }] }
+    ],
+    "text": "Посмертно: призовите Шестерёнку."
+  },
+  {
+    "id": "devourer", "name": "Пожиратель", "type": "creature",
+    "cost": 6, "attack": 4, "health": 4,
+    "abilities": [
+      { "trigger": "on_play", "target": { "side": "friendly", "not_self": true },
+        "effects": [{ "op": "consume", "target": "chosen" }] }
+    ],
+    "text": "При розыгрыше: поглотите другое союзное существо (уничтожьте его и получите его атаку и здоровье)."
+  },
+
+  {
+    "id": "blessing_of_might", "name": "Благословение силы", "type": "spell", "cost": 1,
+    "play_target": { "side": "friendly" },
+    "effects": [{ "op": "buff", "target": "chosen", "attack": 2, "health": 1 }],
+    "text": "Дайте союзному существу +2/+1."
+  },
+  {
+    "id": "tempering", "name": "Закалка", "type": "spell", "cost": 2,
+    "play_target": { "side": "friendly" },
+    "effects": [
+      { "op": "buff", "target": "chosen", "attack": 1, "health": 3 },
+      { "op": "give_keyword", "target": "chosen", "keyword": "taunt" }
+    ],
+    "text": "Дайте союзному существу +1/+3 и Провокацию."
+  },
+  {
+    "id": "holy_veil", "name": "Святой покров", "type": "spell", "cost": 2,
+    "play_target": { "side": "friendly" },
+    "effects": [{ "op": "give_keyword", "target": "chosen", "keyword": "shield" }],
+    "text": "Дайте союзному существу Щит."
+  },
+  {
+    "id": "call_spirits", "name": "Призыв духов", "type": "spell", "cost": 2,
+    "effects": [{ "op": "summon", "card": "tok_spark", "count": 2, "at": "rightmost" }],
+    "text": "Призовите двух Искорок."
+  },
+  {
+    "id": "rally", "name": "Общий сбор", "type": "spell", "cost": 3,
+    "effects": [{ "op": "buff", "target": { "pick": "all", "side": "friendly" }, "attack": 1, "health": 1 }],
+    "text": "Дайте всем вашим существам +1/+1."
+  },
+  {
+    "id": "insight", "name": "Озарение", "type": "spell", "cost": 1, "keywords": ["exhaust"],
+    "effects": [{ "op": "draw", "count": 2 }],
+    "text": "Возьмите 2 карты. Разовая."
+  },
+  {
+    "id": "hoard", "name": "Накопление", "type": "spell", "cost": 1,
+    "effects": [{ "op": "mana_next_round", "amount": 2 }],
+    "text": "В следующем раунде получите 2 дополнительные маны."
+  },
+  {
+    "id": "fire_volley", "name": "Огненный залп", "type": "battle_spell", "cost": 2,
+    "effects": [{ "op": "damage", "target": { "pick": "random", "side": "enemy", "count": 2 }, "amount": 2 }],
+    "text": "Начало боя: нанесите 2 урона двум разным случайным существам противника."
+  },
+  {
+    "id": "war_hymn", "name": "Боевой гимн", "type": "battle_spell", "cost": 2,
+    "effects": [{ "op": "buff", "target": { "pick": "all", "side": "friendly" }, "attack": 1 }],
+    "text": "Начало боя: ваши существа получают +1 к атаке."
+  },
+  {
+    "id": "mirror_shield", "name": "Зеркальный щит", "type": "secret", "cost": 2,
+    "condition": { "event": "enemy_attacks", "target": { "no_keyword": "shield" } },
+    "effects": [{ "op": "give_keyword", "target": "event_target", "keyword": "shield" }],
+    "text": "Секрет: когда противник атакует ваше существо без Щита, дайте ему Щит."
+  },
+  {
+    "id": "vengeance", "name": "Месть", "type": "secret", "cost": 2,
+    "condition": { "event": "friendly_died" },
+    "effects": [{ "op": "damage", "target": { "pick": "random", "side": "enemy", "count": 1 }, "amount": 3 }],
+    "text": "Секрет: когда ваше существо умирает, нанесите 3 урона случайному существу противника."
+  },
+  {
+    "id": "ambush", "name": "Засада", "type": "secret", "cost": 3,
+    "condition": { "event": "side_emptied" },
+    "effects": [{ "op": "summon", "card": "tok_ambusher", "count": 1, "at": "rightmost" }],
+    "text": "Секрет: когда на вашей стороне не остаётся существ, призовите Засадника."
+  },
+  {
+    "id": "snare", "name": "Капкан", "type": "secret", "cost": 3,
+    "condition": { "event": "enemy_attacks" },
+    "effects": [{ "op": "destroy", "target": "event_attacker" }],
+    "text": "Секрет: когда противник атакует ваше существо, уничтожьте атакующего."
+  },
+  {
+    "id": "riposte", "name": "Ответный удар", "type": "secret", "cost": 1,
+    "condition": { "event": "hero_would_take_damage" },
+    "effects": [{ "op": "reduce_damage", "amount": 5 }],
+    "text": "Секрет: когда ваш герой должен получить урон по итогам боя, уменьшите его на 5."
+  },
+  {
+    "id": "seal_of_rebirth", "name": "Печать возрождения", "type": "enchantment", "attach": "creature", "cost": 2,
+    "play_target": { "side": "friendly" },
+    "grants": { "abilities": [
+      { "trigger": "on_death",
+        "effects": [{ "op": "summon", "card": "tok_spark", "count": 1, "at": "death_position" }] }
+    ] },
+    "text": "Существо получает «Посмертно: призовите Искорку»."
+  },
+  {
+    "id": "forge", "name": "Кузница", "type": "enchantment", "attach": "field", "cost": 3,
+    "abilities": [
+      { "trigger": "round_end",
+        "effects": [{ "op": "buff", "target": { "pick": "random", "side": "friendly", "tag": "mech", "count": 1 }, "attack": 1, "health": 1 }] }
+    ],
+    "text": "В конце раунда: дайте случайному вашему Механизму +1/+1."
+  },
+  {
+    "id": "sanctuary", "name": "Святилище", "type": "enchantment", "attach": "field", "cost": 2,
+    "abilities": [
+      { "trigger": "start_of_combat",
+        "effects": [{ "op": "give_keyword", "target": { "pick": "leftmost", "side": "friendly" }, "keyword": "shield" }] }
+    ],
+    "text": "Начало боя: дайте Щит вашему крайнему левому существу."
+  },
+
+  {
+    "id": "tok_spark", "name": "Искорка", "type": "creature", "token": true,
+    "cost": 0, "attack": 1, "health": 1, "tags": ["spirit"],
+    "text": ""
+  },
+  {
+    "id": "tok_skeleton", "name": "Скелет", "type": "creature", "token": true,
+    "cost": 0, "attack": 1, "health": 1, "tags": ["undead"],
+    "text": ""
+  },
+  {
+    "id": "tok_gear", "name": "Шестерёнка", "type": "creature", "token": true,
+    "cost": 0, "attack": 2, "health": 2, "tags": ["mech"], "keywords": ["shield"],
+    "text": "Щит."
+  },
+  {
+    "id": "tok_ambusher", "name": "Засадник", "type": "creature", "token": true,
+    "cost": 0, "attack": 3, "health": 3, "keywords": ["taunt"],
+    "text": "Провокация."
+  }
+]

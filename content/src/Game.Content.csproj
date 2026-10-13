@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Загрузчик и валидатор данных content/ (раздел 11). -->
+  <PropertyGroup>
+    <RootNamespace>Game.Content</RootNamespace>
+    <AssemblyName>Game.Content</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../core/Game.Core.csproj" />
+  </ItemGroup>
+</Project>

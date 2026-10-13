@@ -1,0 +1,9 @@
+{
+  "id": "mechs",
+  "name": "Механизмы",
+  "cards": [
+    "tinkerer", "tinkerer", "shieldbearer", "scavenger", "wind_up_soldier",
+    "axeman", "whirlblade", "battle_mage", "berserker", "dawn_knight",
+    "scrap_golem", "forge", "hoard", "fire_volley", "rally"
+  ]
+}

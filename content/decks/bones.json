@@ -1,0 +1,9 @@
+{
+  "id": "bones",
+  "name": "Кости",
+  "cards": [
+    "candle_spirit", "candle_spirit", "bone_servant", "bone_servant", "gravekeeper",
+    "mourner", "gate_guard", "stone_wall", "devourer", "call_spirits",
+    "seal_of_rebirth", "vengeance", "ambush", "snare", "insight"
+  ]
+}

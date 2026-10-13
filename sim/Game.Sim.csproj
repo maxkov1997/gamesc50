@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Game.Sim</RootNamespace>
+    <AssemblyName>sim</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../core/Game.Core.csproj" />
+    <ProjectReference Include="../content/src/Game.Content.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../content/**/*.json" Exclude="../content/src/**" LinkBase="content" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

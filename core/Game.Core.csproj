@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Ядро: только стандартная библиотека (12.1). Никаких ссылок на движок, ФС и сеть. -->
+  <PropertyGroup>
+    <RootNamespace>Game.Core</RootNamespace>
+    <AssemblyName>Game.Core</AssemblyName>
+  </PropertyGroup>
+</Project>
