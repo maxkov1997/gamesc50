@@ -486,13 +486,13 @@
 | `give_keyword` | target, keyword, duration | Даёт ключевое слово |
 | `damage` | target, amount | Урон; источник — владелец эффекта, если это существо, иначе «без источника» |
 | `destroy` | target | Помечает цель «уничтожить» |
-| `summon` | card, count, at | Призыв; `at`: `death_position`, `right_of_self`, `rightmost` |
+| `summon` | card, count, at | Призыв; `at`: `death_position`, `right_of_self`, `rightmost`, `center` |
 | `draw` | count | Добор (5.2) |
 | `mana_next_round` | amount | Бонус маны на следующий раунд |
 | `consume` | target | Запоминает атаку и здоровье цели, уничтожает её, источник получает +атака/+здоровье навсегда |
 | `reduce_damage` | amount | Уменьшает урон в событии `hero_would_take_damage`, не ниже 0 |
 
-`duration` по умолчанию — по фазе (7.3). `right_of_self` у погибшего источника работает как `death_position`.
+`duration` по умолчанию — по фазе (7.3). `right_of_self` у погибшего источника работает как `death_position`. `center` — в середину стола: при n живых существах призванные встают на позицию ⌊n/2⌋, несколько — подряд слева направо в порядке призыва. Эффектам без источника-существа (заклинания, боевые заклинания, секреты, чары на поле) доступны только `rightmost` и `center`.
 
 ### 11.3 Селекторы
 - Строкой: `self`, `chosen`, `event_target`, `event_attacker`.

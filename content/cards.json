@@ -205,7 +205,7 @@
   },
   {
     "id": "call_spirits", "name": "Призыв духов", "type": "spell", "cost": 2,
-    "effects": [{ "op": "summon", "card": "tok_spark", "count": 2, "at": "rightmost" }],
+    "effects": [{ "op": "summon", "card": "tok_spark", "count": 2, "at": "center" }],
     "text": "Призовите двух Искорок."
   },
   {
@@ -248,7 +248,7 @@
   {
     "id": "ambush", "name": "Засада", "type": "secret", "cost": 3,
     "condition": { "event": "side_emptied" },
-    "effects": [{ "op": "summon", "card": "tok_ambusher", "count": 1, "at": "rightmost" }],
+    "effects": [{ "op": "summon", "card": "tok_ambusher", "count": 1, "at": "center" }],
     "text": "Секрет: когда на вашей стороне не остаётся существ, призовите Засадника."
   },
   {

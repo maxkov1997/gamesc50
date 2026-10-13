@@ -8,29 +8,22 @@ public enum Phase { Planning, Combat, Both }
 /// <param name="ForSpells">Допустимо в поле keywords заклинания.</param>
 public sealed record KeywordSpec(string Id, bool Static, bool ForCreatures, bool ForSpells);
 
-/// <param name="SelfCreature">Источник триггера — само существо («это существо…»); у чар на поле такого триггера быть не может.</param>
 /// <param name="AllowsTarget">Игрок выбирает цель (поле target у способности).</param>
 /// <param name="NeedsCount">Нужен параметр count (Возмездие).</param>
 /// <param name="NeedsCost">Нужен параметр cost (Способность).</param>
 /// <param name="IsAura">Вместо effects — объект aura.</param>
 /// <param name="IsPlayTrigger">«При розыгрыше» — на него действуют правила 11.6 про цикл отзыва.</param>
-/// <param name="EventRefs">Какие ссылки на участников события доступны эффектам (9.3).</param>
 public sealed record TriggerSpec(
     string Id,
     Phase Phase,
-    bool SelfCreature,
     bool AllowsTarget = false,
     bool NeedsCount = false,
     bool NeedsCost = false,
     bool IsAura = false,
-    bool IsPlayTrigger = false,
-    IReadOnlyList<string>? EventRefs = null)
-{
-    public IReadOnlyList<string> EventRefs { get; } = EventRefs ?? Array.Empty<string>();
-}
+    bool IsPlayTrigger = false);
 
 /// <summary>Условие секрета (7.2).</summary>
-public sealed record ConditionSpec(string Id, IReadOnlyList<string> EventRefs);
+public sealed record ConditionSpec(string Id);
 
 public enum ParamKind { Selector, Int, PositiveInt, Keyword, Duration, Card, Placement }
 
@@ -135,6 +128,7 @@ public static class Registry
         public const string DeathPosition = "death_position";
         public const string RightOfSelf = "right_of_self";
         public const string Rightmost = "rightmost";
+        public const string Center = "center";
     }
 
     public static readonly IReadOnlyList<KeywordSpec> KeywordList = new KeywordSpec[]
@@ -151,27 +145,26 @@ public static class Registry
 
     public static readonly IReadOnlyList<TriggerSpec> TriggerList = new TriggerSpec[]
     {
-        new(Triggers.OnPlay, Phase.Planning, SelfCreature: true, AllowsTarget: true, IsPlayTrigger: true),
-        new(Triggers.OnDeath, Phase.Both, SelfCreature: true),
-        new(Triggers.StartOfCombat, Phase.Combat, SelfCreature: false),
-        // GDD-QUESTION: какие ссылки на участников события доступны триггерам (см. docs/QUESTIONS.md, Q2).
-        new(Triggers.OnAttack, Phase.Combat, SelfCreature: true, EventRefs: new[] { Refs.EventTarget }),
-        new(Triggers.AfterDamaged, Phase.Combat, SelfCreature: true),
-        new(Triggers.FriendlyDied, Phase.Both, SelfCreature: false, EventRefs: new[] { Refs.EventTarget }),
-        // GDD-QUESTION: Возмездие считает смерти «других союзных существ» — допускаем только у существ (Q3).
-        new(Triggers.Avenge, Phase.Combat, SelfCreature: true, NeedsCount: true),
-        new(Triggers.RoundStart, Phase.Planning, SelfCreature: false),
-        new(Triggers.RoundEnd, Phase.Planning, SelfCreature: false),
-        new(Triggers.Activated, Phase.Planning, SelfCreature: true, AllowsTarget: true, NeedsCost: true),
-        new(Triggers.Aura, Phase.Both, SelfCreature: false, IsAura: true),
+        // Решено (QUESTIONS.md, Q3): любой триггер допустим и у существ, и у чар на поле.
+        new(Triggers.OnPlay, Phase.Planning, AllowsTarget: true, IsPlayTrigger: true),
+        new(Triggers.OnDeath, Phase.Both),
+        new(Triggers.StartOfCombat, Phase.Combat),
+        new(Triggers.OnAttack, Phase.Combat),
+        new(Triggers.AfterDamaged, Phase.Combat),
+        new(Triggers.FriendlyDied, Phase.Both),
+        new(Triggers.Avenge, Phase.Combat, NeedsCount: true),
+        new(Triggers.RoundStart, Phase.Planning),
+        new(Triggers.RoundEnd, Phase.Planning),
+        new(Triggers.Activated, Phase.Planning, AllowsTarget: true, NeedsCost: true),
+        new(Triggers.Aura, Phase.Both, IsAura: true),
     };
 
     public static readonly IReadOnlyList<ConditionSpec> ConditionList = new ConditionSpec[]
     {
-        new(Conditions.EnemyAttacks, new[] { Refs.EventTarget, Refs.EventAttacker }),
-        new(Conditions.FriendlyDied, new[] { Refs.EventTarget }),
-        new(Conditions.SideEmptied, Array.Empty<string>()),
-        new(Conditions.HeroWouldTakeDamage, Array.Empty<string>()),
+        new(Conditions.EnemyAttacks),
+        new(Conditions.FriendlyDied),
+        new(Conditions.SideEmptied),
+        new(Conditions.HeroWouldTakeDamage),
     };
 
     public static readonly IReadOnlyList<OpSpec> OpList = new OpSpec[]
@@ -226,7 +219,10 @@ public static class Registry
     public static readonly IReadOnlyList<string> PickList = new[] { Picks.All, Picks.Random, Picks.Leftmost, Picks.Rightmost, Picks.Adjacent };
     public static readonly IReadOnlyList<string> SideList = new[] { Sides.Friendly, Sides.Enemy };
     public static readonly IReadOnlyList<string> DurationList = new[] { Durations.Permanent, Durations.Combat };
-    public static readonly IReadOnlyList<string> PlacementList = new[] { Placements.DeathPosition, Placements.RightOfSelf, Placements.Rightmost };
+    public static readonly IReadOnlyList<string> PlacementList = new[] { Placements.DeathPosition, Placements.RightOfSelf, Placements.Rightmost, Placements.Center };
+
+    /// <summary>Позиции призыва, которым не нужен источник-существо.</summary>
+    public static readonly IReadOnlyList<string> SourcelessPlacementList = new[] { Placements.Rightmost, Placements.Center };
     public static readonly IReadOnlyList<string> TagList = new[] { "beast", "undead", "mech", "spirit" };
 
     /// <summary>Префикс id токенов (11.1).</summary>

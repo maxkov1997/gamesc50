@@ -18,7 +18,6 @@ internal sealed class CardValidator
         Phase Phase,
         bool HasCreatureSource,
         bool HasChosen,
-        IReadOnlyList<string> EventRefs,
         string? Condition,
         bool IsPlayTrigger);
 
@@ -61,11 +60,11 @@ internal sealed class CardValidator
                 ValidateKeywords(c.Keywords, $"{path}.keywords", k => k.ForSpells, "заклинания");
                 if (c.PlayTarget != null) ValidateTarget(c.PlayTarget, $"{path}.play_target", hasCreatureSource: false);
                 ValidateEffects(c.Effects, $"{path}.effects",
-                    new EffectContext(Phase.Planning, false, c.PlayTarget != null, Array.Empty<string>(), null, false));
+                    new EffectContext(Phase.Planning, false, c.PlayTarget != null, null, false));
                 break;
             case CardType.BattleSpell:
                 ValidateEffects(c.Effects, $"{path}.effects",
-                    new EffectContext(Phase.Combat, false, false, Array.Empty<string>(), null, false));
+                    new EffectContext(Phase.Combat, false, false, null, false));
                 break;
             case CardType.Secret: ValidateSecret(c, path); break;
             case CardType.Enchantment: ValidateEnchantment(c, path); break;
@@ -105,14 +104,12 @@ internal sealed class CardValidator
         if (cond.Target != null)
         {
             string fp = $"{path}.condition.target";
-            if (spec.EventRefs.Count == 0)
-                Err(ErrorCodes.FieldNotAllowed, fp, $"у условия «{cond.Event}» нет участника, которого можно отфильтровать");
             CheckKeyword(cond.Target.Keyword, fp + ".keyword");
             CheckKeyword(cond.Target.NoKeyword, fp + ".no_keyword");
             CheckTag(cond.Target.Tag, fp + ".tag");
         }
         ValidateEffects(c.Effects, $"{path}.effects",
-            new EffectContext(Phase.Combat, false, false, spec.EventRefs, cond.Event, false));
+            new EffectContext(Phase.Combat, false, false, cond.Event, false));
     }
 
     private void ValidateEnchantment(CardDef c, string path)
@@ -153,8 +150,6 @@ internal sealed class CardValidator
                 continue;
             }
             bool creatureSource = owner != Owner.Field;
-            if (!creatureSource && t.SelfCreature)
-                Err(ErrorCodes.ContentRule, $"{ap}.trigger", $"триггер «{t.Id}» бывает только у существа");
 
             if (t.NeedsCount && a.Count == null) Err(ErrorCodes.MissingField, $"{ap}.count", $"триггеру «{t.Id}» нужен count");
             if (!t.NeedsCount && a.Count != null) Err(ErrorCodes.FieldNotAllowed, $"{ap}.count", $"у триггера «{t.Id}» нет count");
@@ -186,7 +181,7 @@ internal sealed class CardValidator
                 if (a.Aura != null) Err(ErrorCodes.FieldNotAllowed, $"{ap}.aura", "aura бывает только у триггера «aura»");
                 if (a.Effects.Count == 0) Err(ErrorCodes.MissingField, $"{ap}.effects", "у способности нет эффектов");
                 ValidateEffects(a.Effects, $"{ap}.effects",
-                    new EffectContext(t.Phase, creatureSource, a.Target != null, t.EventRefs, null, t.IsPlayTrigger));
+                    new EffectContext(t.Phase, creatureSource, a.Target != null, null, t.IsPlayTrigger));
             }
         }
     }
@@ -194,7 +189,7 @@ internal sealed class CardValidator
     private void ValidateAura(AuraDef aura, string path, bool creatureSource)
     {
         ValidateSelector(aura.Target, $"{path}.target",
-            new EffectContext(Phase.Both, creatureSource, false, Array.Empty<string>(), null, false));
+            new EffectContext(Phase.Both, creatureSource, false, null, false));
         ValidateKeywords(aura.Keywords, $"{path}.keywords", k => k.ForCreatures, "существа");
         // 7.4: аура даёт только атаку и статичные ключевые слова.
         RequireStatic(aura.Keywords, $"{path}.keywords");
@@ -228,7 +223,7 @@ internal sealed class CardValidator
         if (op.RequiredCondition != null && ctx.Condition != op.RequiredCondition)
             Err(ErrorCodes.ContentRule, $"{path}.op", $"операция «{op.Id}» допустима только в секрете с условием «{op.RequiredCondition}»");
         if (op.GrantsMana && ctx.IsPlayTrigger)
-            // GDD-QUESTION: 11.6 «не возвращает ману» — трактуем строго: в «При розыгрыше» нельзя и бонус на следующий раунд (Q1).
+            // Решено (QUESTIONS.md, Q1): в «При розыгрыше» запрещён и бонус маны на следующий раунд.
             Err(ErrorCodes.ContentRule, $"{path}.op", "«При розыгрыше» не должен давать ману (11.6)");
 
         if (e.Target != null) ValidateSelector(e.Target, $"{path}.target", ctx);
@@ -256,8 +251,7 @@ internal sealed class CardValidator
         {
             if (!Registry.PlacementList.Contains(e.At))
                 Err(ErrorCodes.InvalidValue, $"{path}.at", $"неизвестная позиция призыва «{e.At}»");
-            // GDD-QUESTION: у заклинаний и секретов нет источника-существа — им доступен только «rightmost» (Q4).
-            else if (e.At != Registry.Placements.Rightmost && !ctx.HasCreatureSource)
+            else if (!Registry.SourcelessPlacementList.Contains(e.At) && !ctx.HasCreatureSource)
                 Err(ErrorCodes.ContentRule, $"{path}.at", $"позиция «{e.At}» требует источника-существа");
         }
     }
@@ -273,8 +267,8 @@ internal sealed class CardValidator
                 Err(ErrorCodes.ContentRule, path, "«self» допустим только у способности существа");
             else if (r == Registry.Refs.Chosen && !ctx.HasChosen)
                 Err(ErrorCodes.ContentRule, path, "«chosen» требует цели, которую выбирает игрок (play_target или target)");
-            else if ((r == Registry.Refs.EventTarget || r == Registry.Refs.EventAttacker) && !ctx.EventRefs.Contains(r))
-                Err(ErrorCodes.ContentRule, path, $"у этого события нет участника «{r}»");
+            // Решено (QUESTIONS.md, Q2): event_target и event_attacker допустимы в любом триггере и секрете;
+            // если у события нет такого участника, эффект на него пропускается (9.3).
             return;
         }
 

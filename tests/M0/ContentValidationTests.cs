@@ -230,14 +230,53 @@ public class ContentValidationTests
         AssertError(ex, ErrorCodes.MissingField, "(bad).effects[0].count");
     }
 
+    /// <summary>Q3: у чар на поле допустим любой триггер.</summary>
     [Fact]
-    public void M0_rejects_self_trigger_on_field_enchantment()
+    public void M0_field_enchantment_accepts_any_trigger()
+    {
+        foreach (var t in Registry.TriggerList.Where(t => !t.IsAura && !t.AllowsTarget && !t.NeedsCount && !t.NeedsCost))
+        {
+            var db = ContentLoader.LoadCards($$"""
+                [{{Spark}}, { "id": "ok", "name": "Чары", "type": "enchantment", "attach": "field", "cost": 1, "text": "",
+                  "abilities": [{ "trigger": "{{t.Id}}", "effects": [{ "op": "summon", "card": "tok_spark", "at": "center" }] }] }]
+                """);
+            Assert.Equal(2, db.Cards.Count);
+        }
+    }
+
+    /// <summary>Q2: ссылки на участников события допустимы в любом триггере.</summary>
+    [Fact]
+    public void M0_event_refs_allowed_in_any_trigger()
+    {
+        var db = ContentLoader.LoadCards($$"""
+            [{{Spark}}, { "id": "ok", "name": "Ок", "type": "creature", "cost": 2, "attack": 1, "health": 1, "text": "",
+              "abilities": [{ "trigger": "after_damaged", "effects": [{ "op": "destroy", "target": "event_attacker" }] },
+                            { "trigger": "round_end", "effects": [{ "op": "buff", "target": "event_target", "attack": 1 }] }] }]
+            """);
+        Assert.Equal(2, db.Cards.Count);
+    }
+
+    /// <summary>Q4: у заклинаний и секретов призыв — center или rightmost; позиции от источника-существа запрещены.</summary>
+    [Fact]
+    public void M0_sourceless_summon_placement()
     {
         var ex = RejectCard("""
-            { "id": "bad", "name": "Плохая", "type": "enchantment", "attach": "field", "cost": 1, "text": "",
-              "abilities": [{ "trigger": "on_attack", "effects": [{ "op": "draw", "count": 1 }] }] }
+            { "id": "bad", "name": "Плохая", "type": "spell", "cost": 1, "text": "",
+              "effects": [{ "op": "summon", "card": "tok_spark", "at": "death_position" }] }
             """);
-        AssertError(ex, ErrorCodes.ContentRule, "(bad).abilities[0].trigger");
+        AssertError(ex, ErrorCodes.ContentRule, "(bad).effects[0].at");
+        Assert.Equal("center", TestData.Data.Cards.Get("call_spirits").Effects[0].At);
+        Assert.Equal("center", TestData.Data.Cards.Get("ambush").Effects[0].At);
+    }
+
+    [Fact]
+    public void M0_rejects_mana_gain_on_play()
+    {
+        var ex = RejectCard("""
+            { "id": "bad", "name": "Плохая", "type": "creature", "cost": 1, "attack": 1, "health": 1, "text": "",
+              "abilities": [{ "trigger": "on_play", "effects": [{ "op": "mana_next_round", "amount": 1 }] }] }
+            """);
+        AssertError(ex, ErrorCodes.ContentRule, "(bad).abilities[0].effects[0].op");
     }
 
     // --- Колоды ---
