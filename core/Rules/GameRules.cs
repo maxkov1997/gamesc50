@@ -108,11 +108,26 @@ public sealed class GameRules
         if (state.Players.Any(p => !p.IsReady))
             throw new InvalidOperationException("Бой начинается, когда обе стороны нажали «Готов»");
 
-        var result = SimulateCombat(Combat.Snapshot(state), state.Seed);
+        return ApplyCombatResult(state, SimulateCombat(Combat.Snapshot(state), state.Seed));
+    }
+
+    /// <summary>
+    /// Итог боя в постоянное состояние (8.9): урон герою, сработавшие боевые карты — в сброс,
+    /// изменения «навсегда» — на оригиналы по entityId; затем проверка победы (4.4).
+    /// </summary>
+    public List<GameEvent> ApplyCombatResult(MatchState state, CombatResult result)
+    {
         var events = new List<GameEvent>(result.Events);
 
         if (result.DamagedSide is Side damaged)
             state.Player(damaged).HeroHp -= result.HeroDamage;
+
+        foreach (var side in BothSides)
+        {
+            var p = state.Player(side);
+            foreach (int inst in result.SpentCards[(int)side])
+                if (p.BattleZone.Remove(inst)) p.Discard.Add(inst);
+        }
 
         // Перенос изменений «навсегда» на оригиналы по entityId.
         foreach (var d in result.PermanentDeltas)

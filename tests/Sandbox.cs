@@ -88,6 +88,34 @@ public sealed class Sandbox
         return id;
     }
 
+    /// <summary>Положить боевое заклинание или секрет в боевую зону.</summary>
+    public int PutBattle(string cardId, Side side = Side.A)
+    {
+        int id = NewInstance(side, cardId);
+        P(side).BattleZone.Add(id);
+        return id;
+    }
+
+    /// <summary>Прикрепить чары к существу.</summary>
+    public int Enchant(Creature c, string cardId, Side side = Side.A)
+    {
+        int id = NewInstance(side, cardId);
+        c.Enchantments.Add(id);
+        return id;
+    }
+
+    /// <summary>Настоящий бой раунда: обе стороны «Готов» → runCombat (итог применяется к состоянию).</summary>
+    public List<GameEvent> RunCombat()
+    {
+        if (State.Stage == RoundStage.Idle) Planning();
+        foreach (var p in State.Players) p.IsReady = true;
+        return Rules.RunCombat(State);
+    }
+
+    /// <summary>Движок боя на снимке текущего состояния — для кейсов «destroy по …».</summary>
+    public CombatEngine Engine(ulong seed = 1) =>
+        new(Data.Cards, Combat.Snapshot(State), RngStreams.CombatStream(seed, State.Round));
+
     public List<GameEvent> Apply(GameAction action, Side side = Side.A) => Rules.ApplyAction(State, side, action);
 
     public List<GameAction> Legal(Side side = Side.A) => Rules.LegalActions(State, side);

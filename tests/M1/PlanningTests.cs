@@ -46,6 +46,7 @@ public class PlanningTests
     }
 
     [Fact]
+    [Covers("hoard")]
     public void T18_hoard_gives_mana_next_round_only()
     {
         var s = new Sandbox();
@@ -116,6 +117,7 @@ public class PlanningTests
     // ---------- T-21 · Отзыв ----------
 
     [Fact]
+    [Covers("apprentice", "blessing_of_might", "seal_of_rebirth")]
     public void T21_recall()
     {
         var s = new Sandbox().Planning();
@@ -245,6 +247,7 @@ public class PlanningTests
     // ---------- T-26 · Поглощение в подготовке ----------
 
     [Fact]
+    [Covers("devourer")]
     public void T26_devourer_consumes_in_planning()
     {
         var s = new Sandbox().Planning();
@@ -263,6 +266,7 @@ public class PlanningTests
     // ---------- T-27(б) · Кузница ----------
 
     [Fact]
+    [Covers("forge")]
     public void T27b_forge_buffs_mech_at_round_end()
     {
         var s = new Sandbox().Planning();
@@ -283,6 +287,7 @@ public class PlanningTests
     // ---------- T-29(б) · Когда умирает союзник (подготовка) ----------
 
     [Fact]
+    [Covers("mourner")]
     public void T29b_mourner_in_planning()
     {
         var s = new Sandbox().Planning();
@@ -302,6 +307,7 @@ public class PlanningTests
     // ---------- T-30 · В начале раунда ----------
 
     [Fact]
+    [Covers("wind_up_soldier")]
     public void T30_wind_up_soldier_grows_each_round()
     {
         var s = new Sandbox();
@@ -349,6 +355,7 @@ public class PlanningTests
     }
 
     [Fact]
+    [Covers("tinkerer")]
     public void T33b_ability_once_per_round_even_after_recall()
     {
         var s = new Sandbox().Planning();

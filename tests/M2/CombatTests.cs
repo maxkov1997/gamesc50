@@ -10,6 +10,7 @@ public class CombatTests
     // ---------- T-01 · Одновременный урон ----------
 
     [Fact]
+    [Covers("ferret", "gate_guard")]
     public void T01_simultaneous_damage()
     {
         var s = new Sandbox();
@@ -26,6 +27,7 @@ public class CombatTests
     // ---------- T-02 · Щит ----------
 
     [Fact]
+    [Covers("shieldbearer")]
     public void T02_shield()
     {
         var s = new Sandbox();
@@ -49,6 +51,7 @@ public class CombatTests
     // ---------- T-03 · Яд против Щита ----------
 
     [Fact]
+    [Covers("venom_toad")]
     public void T03_poison_vs_shield()
     {
         var s = new Sandbox();
@@ -67,6 +70,7 @@ public class CombatTests
     // ---------- T-04 · Яд убивает ----------
 
     [Fact]
+    [Covers("iron_boar")]
     public void T04_poison_kills()
     {
         var s = new Sandbox();
@@ -83,6 +87,7 @@ public class CombatTests
     // ---------- T-05 · Провокация ----------
 
     [Fact]
+    [Covers("candle_spirit", "tok_spark")]
     public void T05_taunt()
     {
         var s = new Sandbox();
@@ -111,6 +116,7 @@ public class CombatTests
     // ---------- T-06 · Двойная атака ----------
 
     [Fact]
+    [Covers("whirlblade", "tok_skeleton")]
     public void T06_double_attack()
     {
         var s = new Sandbox();
@@ -131,6 +137,7 @@ public class CombatTests
     // ---------- T-07 · Рассечение ----------
 
     [Fact]
+    [Covers("axeman")]
     public void T07_cleave()
     {
         var s = new Sandbox();
@@ -162,6 +169,7 @@ public class CombatTests
     // ---------- T-08 · Позиция призыва и лимит стола ----------
 
     [Fact]
+    [Covers("gravekeeper")]
     public void T08a_summon_at_death_position()
     {
         var s = new Sandbox();
@@ -204,6 +212,7 @@ public class CombatTests
     // ---------- T-09 · Перерождение ----------
 
     [Fact]
+    [Covers("bone_servant")]
     public void T09_reborn()
     {
         var s = new Sandbox();
@@ -223,6 +232,7 @@ public class CombatTests
     // ---------- T-10 · Бой кончается в «Начале боя» ----------
 
     [Fact]
+    [Covers("battle_mage")]
     public void T10_combat_ends_at_start_of_combat()
     {
         var s = new Sandbox();
@@ -239,6 +249,7 @@ public class CombatTests
     // ---------- T-13 · Пат и пас ----------
 
     [Fact]
+    [Covers("stone_wall")]
     public void T13a_stalemate()
     {
         var s = new Sandbox();
@@ -285,6 +296,7 @@ public class CombatTests
     // ---------- T-15 · Полёт ----------
 
     [Fact]
+    [Covers("harpy")]
     public void T15_flying_dodge()
     {
         var s = new Sandbox();

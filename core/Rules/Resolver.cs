@@ -23,6 +23,9 @@ internal sealed class PendingTrigger
     /// <summary>Перерождение источника (8.8, шаг 2).</summary>
     public bool IsReborn { get; init; }
 
+    /// <summary>Срабатывание секрета: при разрешении раскрывается (secret_revealed).</summary>
+    public bool IsSecret { get; init; }
+
     public int? Chosen { get; init; }
     public int? EventTarget { get; init; }
     public int? EventAttacker { get; init; }
@@ -56,6 +59,12 @@ internal sealed class Resolver
 
     public List<PermanentDelta> PermanentDeltas { get; } = new();
 
+    /// <summary>Сработавшие в бою боевые заклинания и секреты по сторонам — после боя в сброс (8.9).</summary>
+    public List<int>[] SpentCards { get; } = { new(), new() };
+
+    /// <summary>Урон герою, который вот-вот будет нанесён (hero_would_take_damage); его меняет reduce_damage.</summary>
+    public int? PendingHeroDamage { get; set; }
+
     private delegate void OpHandler(Resolver r, PendingTrigger t, EffectDef e);
 
     /// <summary>Реализации операций 11.2. Новая механика — новая запись здесь и в Registry.</summary>
@@ -69,6 +78,7 @@ internal sealed class Resolver
         [Registry.Ops.Draw] = (r, t, e) => r.OpDraw(t, e),
         [Registry.Ops.ManaNextRound] = (r, t, e) => r.OpManaNextRound(t, e),
         [Registry.Ops.Consume] = (r, t, e) => r.OpConsume(t, e),
+        [Registry.Ops.ReduceDamage] = (r, t, e) => r.OpReduceDamage(t, e),
     };
 
     public Resolver(CardDatabase db, GameConfig config, Phase phase, PlayerState?[] sides, Func<Side, IRandom> rng, List<GameEvent> events)
@@ -130,6 +140,55 @@ internal sealed class Resolver
             EnqueueCreatureTriggers(side, c, trigger, eventTarget: eventTarget);
     }
 
+    /// <summary>Боевые заклинания стороны в порядке розыгрыша (8.4). Срабатывают всегда — сразу помечаются потраченными.</summary>
+    public void EnqueueBattleSpells(Side side)
+    {
+        var p = Side(side);
+        foreach (int inst in p.BattleZone)
+        {
+            var def = _db.Get(p.GetInstance(inst).CardId);
+            if (def.Type != CardType.BattleSpell) continue;
+            SpentCards[(int)side].Add(inst);
+            Enqueue(new PendingTrigger { Side = side, SourceCardId = def.Id, SourceInstanceId = inst, Effects = def.Effects });
+        }
+    }
+
+    /// <summary>
+    /// Секреты стороны с условием condition, в порядке розыгрыша (9.2). Только в бою.
+    /// Секрет помечается сработавшим, когда встаёт в очередь, и больше в очередь не ставится (9.1).
+    /// Фильтр условия проверяет участника события event_target.
+    /// </summary>
+    public void EnqueueSecrets(Side side, string condition, int? eventTarget = null, int? eventAttacker = null)
+    {
+        if (Phase != Phase.Combat) return;
+        var p = Side(side);
+        foreach (int inst in p.BattleZone)
+        {
+            var def = _db.Get(p.GetInstance(inst).CardId);
+            if (def.Type != CardType.Secret || def.Condition!.Event != condition) continue;
+            if (SpentCards[(int)side].Contains(inst)) continue;
+            if (def.Condition.Target is { } filter && !FilterMatches(filter, eventTarget)) continue;
+            SpentCards[(int)side].Add(inst);
+            Enqueue(new PendingTrigger
+            {
+                Side = side, SourceCardId = def.Id, SourceInstanceId = inst, Effects = def.Effects,
+                EventTarget = eventTarget, EventAttacker = eventAttacker, IsSecret = true,
+            });
+        }
+    }
+
+    // GDD-QUESTION: фильтр условия секрета проверяет event_target — атакованное или погибшее существо (Q10).
+    private bool FilterMatches(FilterDef filter, int? participant)
+    {
+        if (participant is not int id || FindAliveAnywhere(id) is not { } c) return false;
+        var p = OwnerOf(c);
+        var keywords = Stats.Keywords(_db, p, c);
+        if (filter.Keyword != null && !keywords.Contains(filter.Keyword)) return false;
+        if (filter.NoKeyword != null && keywords.Contains(filter.NoKeyword)) return false;
+        if (filter.Tag != null && !_db.Get(c.CardId).Tags.Contains(filter.Tag)) return false;
+        return true;
+    }
+
     public void EnqueueCreatureTriggers(Side side, Creature c, string trigger, int? chosen = null, int? eventTarget = null, bool survives = false)
     {
         foreach (var a in Stats.Abilities(_db, Side(side), c))
@@ -183,6 +242,8 @@ internal sealed class Resolver
             ResolveReborn(t);
             return;
         }
+        if (t.IsSecret)
+            Events.Add(new GameEvent { Type = EventTypes.SecretRevealed, Side = t.Side, CardId = t.SourceCardId, InstanceId = t.SourceInstanceId });
         if (t.Ability != null)
         {
             Events.Add(new GameEvent
@@ -220,6 +281,7 @@ internal sealed class Resolver
             }
             if (dead.Count == 0) return;
 
+            var aliveBefore = new[] { _sides[0]?.AliveCount ?? 0, _sides[1]?.AliveCount ?? 0 };
             foreach (var (side, c, _, _) in dead)
             {
                 var p = Side(side);
@@ -245,12 +307,41 @@ internal sealed class Resolver
                 if (Phase == Phase.Combat && reborn)
                     Enqueue(new PendingTrigger { Side = side, SourceCardId = c.CardId, SourceCreature = c, SurvivesSource = true, IsReborn = true });
 
-                // 3. «Когда умирает союзник»: чары на поле, затем живые союзники.
+                // 3. «Когда умирает союзник»: секреты (только в бою), чары на поле, живые союзники (9.2).
+                EnqueueSecrets(side, Registry.Conditions.FriendlyDied, eventTarget: c.EntityId);
                 EnqueueSideTriggers(side, Registry.Triggers.FriendlyDied, eventTarget: c.EntityId);
+                //    +1 к счётчику Возмездия каждого живого союзника; достигшие N — в очередь, счётчик = 0.
+                if (Phase == Phase.Combat) CountAvenge(side);
 
                 // В подготовке погибшее существо уходит в сброс (токен исчезает), чары с него — в сброс.
                 // В бою погибает только копия.
                 if (Phase == Phase.Planning) Zones.DiscardCreature(Side(side), c);
+            }
+
+            // Сторона, где живых стало 0, а было больше 0 — секреты side_emptied.
+            foreach (var side in SidesInOrder())
+                if (aliveBefore[(int)side] > 0 && Side(side).AliveCount == 0)
+                    EnqueueSecrets(side, Registry.Conditions.SideEmptied);
+        }
+    }
+
+    private void CountAvenge(Side side)
+    {
+        var p = Side(side);
+        foreach (var ally in p.Alive.ToList())
+        {
+            foreach (var a in Stats.Abilities(_db, p, ally))
+            {
+                if (a.Ability.Trigger != Registry.Triggers.Avenge) continue;
+                ally.AvengeProgress ??= new List<int>();
+                while (ally.AvengeProgress.Count <= a.Index) ally.AvengeProgress.Add(0);
+                ally.AvengeProgress[a.Index]++;
+                if (ally.AvengeProgress[a.Index] < a.Ability.Count) continue;
+                ally.AvengeProgress[a.Index] = 0;
+                Enqueue(new PendingTrigger
+                {
+                    Side = side, SourceCardId = ally.CardId, SourceCreature = ally, Ability = a, Effects = a.Ability.Effects,
+                });
             }
         }
     }
@@ -460,6 +551,11 @@ internal sealed class Resolver
             RecordPermanent(owner, source, attack, health, null);
             StatsChanged(owner, source, Registry.Durations.Permanent);
         }
+    }
+
+    private void OpReduceDamage(PendingTrigger t, EffectDef e)
+    {
+        if (PendingHeroDamage is int damage) PendingHeroDamage = Math.Max(0, damage - e.Amount!.Value);
     }
 
     private void OpDraw(PendingTrigger t, EffectDef e) =>

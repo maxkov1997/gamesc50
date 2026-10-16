@@ -41,6 +41,7 @@ public class ActionTests
     }
 
     [Fact]
+    [Covers("insight")]
     public void M1_exhaust_goes_to_exile()
     {
         var s = new Sandbox().Planning();
@@ -56,6 +57,7 @@ public class ActionTests
     }
 
     [Fact]
+    [Covers("call_spirits")]
     public void M1_call_spirits_summons_in_center()
     {
         var s = new Sandbox().Planning();

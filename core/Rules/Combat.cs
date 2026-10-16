@@ -29,6 +29,9 @@ public sealed class CombatResult
     public Side? DamagedSide { get; init; }
     public int HeroDamage { get; init; }
     public List<PermanentDelta> PermanentDeltas { get; init; } = new();
+
+    /// <summary>Сработавшие боевые заклинания и секреты по сторонам (индекс — сторона): после боя в сброс.</summary>
+    public List<List<int>> SpentCards { get; init; } = new() { new(), new() };
 }
 
 public static class Combat
@@ -162,12 +165,29 @@ public sealed class CombatEngine
         return _rng.Int(2) == 0 ? Core.Side.A : Core.Side.B;
     }
 
-    /// <summary>8.4: по стороне с инициативой, затем другой — чары на поле по слотам, существа слева направо.</summary>
+    /// <summary>
+    /// 8.4: раскрыть боевые заклинания; затем по стороне с инициативой и другой — боевые заклинания
+    /// в порядке розыгрыша → чары на поле по слотам → существа слева направо.
+    /// </summary>
     private void StartOfCombat(Side first)
     {
         _r.ActiveSide = first;
-        foreach (var side in new[] { first, Resolver.Other(first) })
+        var order = new[] { first, Resolver.Other(first) };
+        foreach (var side in order)
+        {
+            var p = _sides[(int)side];
+            foreach (int inst in p.BattleZone)
+            {
+                var def = _db.Get(p.GetInstance(inst).CardId);
+                if (def.Type == CardType.BattleSpell)
+                    Events.Add(new GameEvent { Type = EventTypes.BattleSpellRevealed, Side = side, CardId = def.Id, InstanceId = inst });
+            }
+        }
+        foreach (var side in order)
+        {
+            _r.EnqueueBattleSpells(side);
             _r.EnqueueSideTriggers(side, Registry.Triggers.StartOfCombat);
+        }
         _r.Run();
     }
 
@@ -225,6 +245,7 @@ public sealed class CombatEngine
         Events.Add(new GameEvent { Type = EventTypes.AttackDeclared, Side = side, SourceEntityId = a.EntityId, Target = t.EntityId });
 
         _r.EnqueueCreatureTriggers(side, a, Registry.Triggers.OnAttack, eventTarget: t.EntityId);
+        _r.EnqueueSecrets(enemy.Side, Registry.Conditions.EnemyAttacks, eventTarget: t.EntityId, eventAttacker: a.EntityId);
         _r.Run();
         if (_r.LimitReached) return;
         // Атака сорвалась — черёд потрачен.
@@ -266,6 +287,15 @@ public sealed class CombatEngine
             var loser = _sides[(int)Resolver.Other(winner)];
             damaged = loser.Side;
             damage = Combat.HeroDamage(_db, _config, _sides[(int)winner].Alive);
+
+            // hero_would_take_damage: секреты проигравшего могут уменьшить урон (не ниже 0).
+            _r.ActiveSide = loser.Side;
+            _r.PendingHeroDamage = damage;
+            _r.EnqueueSecrets(loser.Side, Registry.Conditions.HeroWouldTakeDamage);
+            _r.Run();
+            damage = _r.PendingHeroDamage.Value;
+            _r.PendingHeroDamage = null;
+
             loser.HeroHp -= damage;
             Events.Add(new GameEvent { Type = EventTypes.HeroDamaged, Side = loser.Side, Amount = damage, Health = loser.HeroHp });
         }
@@ -279,6 +309,7 @@ public sealed class CombatEngine
             DamagedSide = damaged,
             HeroDamage = damage,
             PermanentDeltas = _r.PermanentDeltas,
+            SpentCards = _r.SpentCards.Select(l => l.ToList()).ToList(),
         };
     }
 }

@@ -65,6 +65,10 @@ public sealed class Creature
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public List<string>? RemovedKeywords { get; set; }
 
+    /// <summary>Счётчики Возмездия по номерам способностей (7.2): смерти других союзников в этом бою.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public List<int>? AvengeProgress { get; set; }
+
     /// <summary>Надгробие (8.8): держит позицию, пока разрешается очередь. Вне очереди не бывает.</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public bool Tombstone { get; set; }
