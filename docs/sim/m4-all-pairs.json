@@ -1,0 +1,1136 @@
+[
+  {
+    "deck_a": "bones",
+    "deck_b": "bones",
+    "matches": 1000,
+    "seed": 1,
+    "wins_a": 480,
+    "wins_b": 514,
+    "draws": 6,
+    "average_rounds": 22.091,
+    "combats": 22091,
+    "draw_combats": 4944,
+    "draw_combat_share": 0.2238,
+    "average_attacks": 16.9803,
+    "max_attacks": 27,
+    "exceptions": 0,
+    "exception_messages": [],
+    "limit_combats": 0,
+    "warnings": 0,
+    "cards": [
+      {
+        "card_id": "gate_guard",
+        "name": "\u0421\u0442\u0440\u0430\u0436 \u0432\u043E\u0440\u043E\u0442",
+        "played": 1578,
+        "matches_played": 1578,
+        "wins": 776,
+        "win_rate": 0.4918
+      },
+      {
+        "card_id": "candle_spirit",
+        "name": "\u0421\u0432\u0435\u0447\u043D\u043E\u0439 \u0434\u0443\u0445",
+        "played": 3657,
+        "matches_played": 1998,
+        "wins": 994,
+        "win_rate": 0.4975
+      },
+      {
+        "card_id": "bone_servant",
+        "name": "\u041A\u043E\u0441\u0442\u044F\u043D\u043E\u0439 \u0441\u043B\u0443\u0433\u0430",
+        "played": 3891,
+        "matches_played": 1998,
+        "wins": 994,
+        "win_rate": 0.4975
+      },
+      {
+        "card_id": "stone_wall",
+        "name": "\u041A\u0430\u043C\u0435\u043D\u043D\u0430\u044F \u0441\u0442\u0435\u043D\u0430",
+        "played": 1939,
+        "matches_played": 1939,
+        "wins": 952,
+        "win_rate": 0.491
+      },
+      {
+        "card_id": "mourner",
+        "name": "\u041F\u043B\u0430\u043A\u0430\u043B\u044C\u0449\u0438\u0446\u0430",
+        "played": 1955,
+        "matches_played": 1954,
+        "wins": 994,
+        "win_rate": 0.5087
+      },
+      {
+        "card_id": "gravekeeper",
+        "name": "\u041A\u043B\u0430\u0434\u0431\u0438\u0449\u0435\u043D\u0441\u043A\u0438\u0439 \u0441\u0442\u043E\u0440\u043E\u0436",
+        "played": 1999,
+        "matches_played": 1999,
+        "wins": 994,
+        "win_rate": 0.4972
+      },
+      {
+        "card_id": "devourer",
+        "name": "\u041F\u043E\u0436\u0438\u0440\u0430\u0442\u0435\u043B\u044C",
+        "played": 2000,
+        "matches_played": 2000,
+        "wins": 994,
+        "win_rate": 0.497
+      },
+      {
+        "card_id": "call_spirits",
+        "name": "\u041F\u0440\u0438\u0437\u044B\u0432 \u0434\u0443\u0445\u043E\u0432",
+        "played": 15839,
+        "matches_played": 1985,
+        "wins": 988,
+        "win_rate": 0.4977
+      },
+      {
+        "card_id": "insight",
+        "name": "\u041E\u0437\u0430\u0440\u0435\u043D\u0438\u0435",
+        "played": 1994,
+        "matches_played": 1994,
+        "wins": 990,
+        "win_rate": 0.4965
+      },
+      {
+        "card_id": "vengeance",
+        "name": "\u041C\u0435\u0441\u0442\u044C",
+        "played": 18561,
+        "matches_played": 1998,
+        "wins": 993,
+        "win_rate": 0.497
+      },
+      {
+        "card_id": "ambush",
+        "name": "\u0417\u0430\u0441\u0430\u0434\u0430",
+        "played": 16564,
+        "matches_played": 1999,
+        "wins": 994,
+        "win_rate": 0.4972
+      },
+      {
+        "card_id": "snare",
+        "name": "\u041A\u0430\u043F\u043A\u0430\u043D",
+        "played": 18633,
+        "matches_played": 1999,
+        "wins": 993,
+        "win_rate": 0.4967
+      },
+      {
+        "card_id": "seal_of_rebirth",
+        "name": "\u041F\u0435\u0447\u0430\u0442\u044C \u0432\u043E\u0437\u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F",
+        "played": 1987,
+        "matches_played": 1984,
+        "wins": 989,
+        "win_rate": 0.4985
+      }
+    ]
+  },
+  {
+    "deck_a": "bones",
+    "deck_b": "mechs",
+    "matches": 1000,
+    "seed": 1,
+    "wins_a": 5,
+    "wins_b": 995,
+    "draws": 0,
+    "average_rounds": 10.316,
+    "combats": 10316,
+    "draw_combats": 1231,
+    "draw_combat_share": 0.1193,
+    "average_attacks": 9.5296,
+    "max_attacks": 19,
+    "exceptions": 0,
+    "exception_messages": [],
+    "limit_combats": 0,
+    "warnings": 0,
+    "cards": [
+      {
+        "card_id": "gate_guard",
+        "name": "\u0421\u0442\u0440\u0430\u0436 \u0432\u043E\u0440\u043E\u0442",
+        "played": 801,
+        "matches_played": 801,
+        "wins": 4,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "candle_spirit",
+        "name": "\u0421\u0432\u0435\u0447\u043D\u043E\u0439 \u0434\u0443\u0445",
+        "played": 1825,
+        "matches_played": 999,
+        "wins": 5,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "shieldbearer",
+        "name": "\u0429\u0438\u0442\u043E\u043D\u043E\u0441\u0435\u0446",
+        "played": 303,
+        "matches_played": 303,
+        "wins": 301,
+        "win_rate": 0.9934
+      },
+      {
+        "card_id": "bone_servant",
+        "name": "\u041A\u043E\u0441\u0442\u044F\u043D\u043E\u0439 \u0441\u043B\u0443\u0433\u0430",
+        "played": 1937,
+        "matches_played": 999,
+        "wins": 5,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "tinkerer",
+        "name": "\u041C\u0435\u0445\u0430\u043D\u0438\u043A-\u0441\u0430\u043C\u043E\u0443\u0447\u043A\u0430",
+        "played": 595,
+        "matches_played": 547,
+        "wins": 544,
+        "win_rate": 0.9945
+      },
+      {
+        "card_id": "stone_wall",
+        "name": "\u041A\u0430\u043C\u0435\u043D\u043D\u0430\u044F \u0441\u0442\u0435\u043D\u0430",
+        "played": 965,
+        "matches_played": 965,
+        "wins": 5,
+        "win_rate": 0.0052
+      },
+      {
+        "card_id": "mourner",
+        "name": "\u041F\u043B\u0430\u043A\u0430\u043B\u044C\u0449\u0438\u0446\u0430",
+        "played": 973,
+        "matches_played": 972,
+        "wins": 5,
+        "win_rate": 0.0051
+      },
+      {
+        "card_id": "axeman",
+        "name": "\u0421\u0435\u043A\u0438\u0440\u043E\u043D\u043E\u0441\u0435\u0446",
+        "played": 551,
+        "matches_played": 551,
+        "wins": 550,
+        "win_rate": 0.9982
+      },
+      {
+        "card_id": "whirlblade",
+        "name": "\u0412\u0438\u0445\u0440\u0435\u0432\u043E\u0439 \u043A\u043B\u0438\u043D\u043E\u043A",
+        "played": 537,
+        "matches_played": 537,
+        "wins": 533,
+        "win_rate": 0.9926
+      },
+      {
+        "card_id": "gravekeeper",
+        "name": "\u041A\u043B\u0430\u0434\u0431\u0438\u0449\u0435\u043D\u0441\u043A\u0438\u0439 \u0441\u0442\u043E\u0440\u043E\u0436",
+        "played": 998,
+        "matches_played": 998,
+        "wins": 5,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "scavenger",
+        "name": "\u0421\u0431\u043E\u0440\u0449\u0438\u043A \u0445\u043B\u0430\u043C\u0430",
+        "played": 533,
+        "matches_played": 533,
+        "wins": 529,
+        "win_rate": 0.9925
+      },
+      {
+        "card_id": "wind_up_soldier",
+        "name": "\u0417\u0430\u0432\u043E\u0434\u043D\u043E\u0439 \u0441\u043E\u043B\u0434\u0430\u0442",
+        "played": 534,
+        "matches_played": 534,
+        "wins": 534,
+        "win_rate": 1
+      },
+      {
+        "card_id": "battle_mage",
+        "name": "\u0411\u043E\u0435\u0432\u043E\u0439 \u043C\u0430\u0433",
+        "played": 990,
+        "matches_played": 990,
+        "wins": 985,
+        "win_rate": 0.9949
+      },
+      {
+        "card_id": "berserker",
+        "name": "\u0411\u0435\u0440\u0441\u0435\u0440\u043A",
+        "played": 986,
+        "matches_played": 986,
+        "wins": 981,
+        "win_rate": 0.9949
+      },
+      {
+        "card_id": "dawn_knight",
+        "name": "\u0420\u044B\u0446\u0430\u0440\u044C \u0437\u0430\u0440\u0438",
+        "played": 998,
+        "matches_played": 998,
+        "wins": 993,
+        "win_rate": 0.995
+      },
+      {
+        "card_id": "scrap_golem",
+        "name": "\u0413\u043E\u043B\u0435\u043C \u0438\u0437 \u043B\u043E\u043C\u0430",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 995,
+        "win_rate": 0.995
+      },
+      {
+        "card_id": "devourer",
+        "name": "\u041F\u043E\u0436\u0438\u0440\u0430\u0442\u0435\u043B\u044C",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 5,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "call_spirits",
+        "name": "\u041F\u0440\u0438\u0437\u044B\u0432 \u0434\u0443\u0445\u043E\u0432",
+        "played": 1773,
+        "matches_played": 947,
+        "wins": 0,
+        "win_rate": 0
+      },
+      {
+        "card_id": "rally",
+        "name": "\u041E\u0431\u0449\u0438\u0439 \u0441\u0431\u043E\u0440",
+        "played": 2778,
+        "matches_played": 978,
+        "wins": 977,
+        "win_rate": 0.999
+      },
+      {
+        "card_id": "insight",
+        "name": "\u041E\u0437\u0430\u0440\u0435\u043D\u0438\u0435",
+        "played": 990,
+        "matches_played": 990,
+        "wins": 5,
+        "win_rate": 0.0051
+      },
+      {
+        "card_id": "hoard",
+        "name": "\u041D\u0430\u043A\u043E\u043F\u043B\u0435\u043D\u0438\u0435",
+        "played": 2955,
+        "matches_played": 992,
+        "wins": 990,
+        "win_rate": 0.998
+      },
+      {
+        "card_id": "fire_volley",
+        "name": "\u041E\u0433\u043D\u0435\u043D\u043D\u044B\u0439 \u0437\u0430\u043B\u043F",
+        "played": 3450,
+        "matches_played": 986,
+        "wins": 982,
+        "win_rate": 0.9959
+      },
+      {
+        "card_id": "vengeance",
+        "name": "\u041C\u0435\u0441\u0442\u044C",
+        "played": 3108,
+        "matches_played": 994,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "ambush",
+        "name": "\u0417\u0430\u0441\u0430\u0434\u0430",
+        "played": 3095,
+        "matches_played": 992,
+        "wins": 5,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "snare",
+        "name": "\u041A\u0430\u043F\u043A\u0430\u043D",
+        "played": 3168,
+        "matches_played": 997,
+        "wins": 5,
+        "win_rate": 0.005
+      },
+      {
+        "card_id": "seal_of_rebirth",
+        "name": "\u041F\u0435\u0447\u0430\u0442\u044C \u0432\u043E\u0437\u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F",
+        "played": 943,
+        "matches_played": 941,
+        "wins": 2,
+        "win_rate": 0.0021
+      },
+      {
+        "card_id": "forge",
+        "name": "\u041A\u0443\u0437\u043D\u0438\u0446\u0430",
+        "played": 979,
+        "matches_played": 979,
+        "wins": 978,
+        "win_rate": 0.999
+      }
+    ]
+  },
+  {
+    "deck_a": "bones",
+    "deck_b": "pack",
+    "matches": 1000,
+    "seed": 1,
+    "wins_a": 3,
+    "wins_b": 997,
+    "draws": 0,
+    "average_rounds": 11.847,
+    "combats": 11847,
+    "draw_combats": 1562,
+    "draw_combat_share": 0.1318,
+    "average_attacks": 10.5979,
+    "max_attacks": 23,
+    "exceptions": 0,
+    "exception_messages": [],
+    "limit_combats": 0,
+    "warnings": 0,
+    "cards": [
+      {
+        "card_id": "gate_guard",
+        "name": "\u0421\u0442\u0440\u0430\u0436 \u0432\u043E\u0440\u043E\u0442",
+        "played": 801,
+        "matches_played": 801,
+        "wins": 3,
+        "win_rate": 0.0037
+      },
+      {
+        "card_id": "ferret",
+        "name": "\u0420\u044B\u0436\u0438\u0439 \u0445\u043E\u0440\u0451\u043A",
+        "played": 838,
+        "matches_played": 838,
+        "wins": 835,
+        "win_rate": 0.9964
+      },
+      {
+        "card_id": "candle_spirit",
+        "name": "\u0421\u0432\u0435\u0447\u043D\u043E\u0439 \u0434\u0443\u0445",
+        "played": 1825,
+        "matches_played": 999,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "apprentice",
+        "name": "\u041F\u043E\u0434\u043C\u0430\u0441\u0442\u0435\u0440\u044C\u0435",
+        "played": 821,
+        "matches_played": 821,
+        "wins": 819,
+        "win_rate": 0.9976
+      },
+      {
+        "card_id": "venom_toad",
+        "name": "\u042F\u0434\u043E\u0432\u0438\u0442\u0430\u044F \u0436\u0430\u0431\u0430",
+        "played": 864,
+        "matches_played": 864,
+        "wins": 861,
+        "win_rate": 0.9965
+      },
+      {
+        "card_id": "bone_servant",
+        "name": "\u041A\u043E\u0441\u0442\u044F\u043D\u043E\u0439 \u0441\u043B\u0443\u0433\u0430",
+        "played": 1938,
+        "matches_played": 999,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "watchdog",
+        "name": "\u0421\u0442\u043E\u0440\u043E\u0436\u0435\u0432\u043E\u0439 \u043F\u0451\u0441",
+        "played": 859,
+        "matches_played": 859,
+        "wins": 857,
+        "win_rate": 0.9977
+      },
+      {
+        "card_id": "stone_wall",
+        "name": "\u041A\u0430\u043C\u0435\u043D\u043D\u0430\u044F \u0441\u0442\u0435\u043D\u0430",
+        "played": 965,
+        "matches_played": 965,
+        "wins": 3,
+        "win_rate": 0.0031
+      },
+      {
+        "card_id": "wolf",
+        "name": "\u041C\u0430\u0442\u0451\u0440\u044B\u0439 \u0432\u043E\u043B\u043A",
+        "played": 872,
+        "matches_played": 872,
+        "wins": 869,
+        "win_rate": 0.9966
+      },
+      {
+        "card_id": "mourner",
+        "name": "\u041F\u043B\u0430\u043A\u0430\u043B\u044C\u0449\u0438\u0446\u0430",
+        "played": 979,
+        "matches_played": 978,
+        "wins": 3,
+        "win_rate": 0.0031
+      },
+      {
+        "card_id": "harpy",
+        "name": "\u0413\u0430\u0440\u043F\u0438\u044F",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 997,
+        "win_rate": 0.997
+      },
+      {
+        "card_id": "gravekeeper",
+        "name": "\u041A\u043B\u0430\u0434\u0431\u0438\u0449\u0435\u043D\u0441\u043A\u0438\u0439 \u0441\u0442\u043E\u0440\u043E\u0436",
+        "played": 999,
+        "matches_played": 999,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "iron_boar",
+        "name": "\u0411\u0440\u043E\u043D\u0435\u0432\u0435\u043F\u0440\u044C",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 997,
+        "win_rate": 0.997
+      },
+      {
+        "card_id": "pack_leader",
+        "name": "\u0412\u043E\u0436\u0430\u043A \u0441\u0442\u0430\u0438",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 997,
+        "win_rate": 0.997
+      },
+      {
+        "card_id": "devourer",
+        "name": "\u041F\u043E\u0436\u0438\u0440\u0430\u0442\u0435\u043B\u044C",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "blessing_of_might",
+        "name": "\u0411\u043B\u0430\u0433\u043E\u0441\u043B\u043E\u0432\u0435\u043D\u0438\u0435 \u0441\u0438\u043B\u044B",
+        "played": 2819,
+        "matches_played": 996,
+        "wins": 994,
+        "win_rate": 0.998
+      },
+      {
+        "card_id": "tempering",
+        "name": "\u0417\u0430\u043A\u0430\u043B\u043A\u0430",
+        "played": 2407,
+        "matches_played": 997,
+        "wins": 995,
+        "win_rate": 0.998
+      },
+      {
+        "card_id": "holy_veil",
+        "name": "\u0421\u0432\u044F\u0442\u043E\u0439 \u043F\u043E\u043A\u0440\u043E\u0432",
+        "played": 2390,
+        "matches_played": 996,
+        "wins": 994,
+        "win_rate": 0.998
+      },
+      {
+        "card_id": "call_spirits",
+        "name": "\u041F\u0440\u0438\u0437\u044B\u0432 \u0434\u0443\u0445\u043E\u0432",
+        "played": 2661,
+        "matches_played": 982,
+        "wins": 2,
+        "win_rate": 0.002
+      },
+      {
+        "card_id": "insight",
+        "name": "\u041E\u0437\u0430\u0440\u0435\u043D\u0438\u0435",
+        "played": 997,
+        "matches_played": 997,
+        "wins": 2,
+        "win_rate": 0.002
+      },
+      {
+        "card_id": "war_hymn",
+        "name": "\u0411\u043E\u0435\u0432\u043E\u0439 \u0433\u0438\u043C\u043D",
+        "played": 3395,
+        "matches_played": 1000,
+        "wins": 997,
+        "win_rate": 0.997
+      },
+      {
+        "card_id": "mirror_shield",
+        "name": "\u0417\u0435\u0440\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0449\u0438\u0442",
+        "played": 3435,
+        "matches_played": 1000,
+        "wins": 997,
+        "win_rate": 0.997
+      },
+      {
+        "card_id": "vengeance",
+        "name": "\u041C\u0435\u0441\u0442\u044C",
+        "played": 3962,
+        "matches_played": 998,
+        "wins": 2,
+        "win_rate": 0.002
+      },
+      {
+        "card_id": "ambush",
+        "name": "\u0417\u0430\u0441\u0430\u0434\u0430",
+        "played": 3694,
+        "matches_played": 999,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "snare",
+        "name": "\u041A\u0430\u043F\u043A\u0430\u043D",
+        "played": 3944,
+        "matches_played": 1000,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "riposte",
+        "name": "\u041E\u0442\u0432\u0435\u0442\u043D\u044B\u0439 \u0443\u0434\u0430\u0440",
+        "played": 1991,
+        "matches_played": 999,
+        "wins": 996,
+        "win_rate": 0.997
+      },
+      {
+        "card_id": "seal_of_rebirth",
+        "name": "\u041F\u0435\u0447\u0430\u0442\u044C \u0432\u043E\u0437\u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F",
+        "played": 991,
+        "matches_played": 989,
+        "wins": 3,
+        "win_rate": 0.003
+      },
+      {
+        "card_id": "sanctuary",
+        "name": "\u0421\u0432\u044F\u0442\u0438\u043B\u0438\u0449\u0435",
+        "played": 998,
+        "matches_played": 998,
+        "wins": 995,
+        "win_rate": 0.997
+      }
+    ]
+  },
+  {
+    "deck_a": "mechs",
+    "deck_b": "mechs",
+    "matches": 1000,
+    "seed": 1,
+    "wins_a": 482,
+    "wins_b": 518,
+    "draws": 0,
+    "average_rounds": 14.547,
+    "combats": 14547,
+    "draw_combats": 3703,
+    "draw_combat_share": 0.2546,
+    "average_attacks": 8.6636,
+    "max_attacks": 17,
+    "exceptions": 0,
+    "exception_messages": [],
+    "limit_combats": 0,
+    "warnings": 0,
+    "cards": [
+      {
+        "card_id": "shieldbearer",
+        "name": "\u0429\u0438\u0442\u043E\u043D\u043E\u0441\u0435\u0446",
+        "played": 602,
+        "matches_played": 602,
+        "wins": 274,
+        "win_rate": 0.4551
+      },
+      {
+        "card_id": "tinkerer",
+        "name": "\u041C\u0435\u0445\u0430\u043D\u0438\u043A-\u0441\u0430\u043C\u043E\u0443\u0447\u043A\u0430",
+        "played": 1177,
+        "matches_played": 1072,
+        "wins": 534,
+        "win_rate": 0.4981
+      },
+      {
+        "card_id": "axeman",
+        "name": "\u0421\u0435\u043A\u0438\u0440\u043E\u043D\u043E\u0441\u0435\u0446",
+        "played": 1072,
+        "matches_played": 1072,
+        "wins": 580,
+        "win_rate": 0.541
+      },
+      {
+        "card_id": "whirlblade",
+        "name": "\u0412\u0438\u0445\u0440\u0435\u0432\u043E\u0439 \u043A\u043B\u0438\u043D\u043E\u043A",
+        "played": 1081,
+        "matches_played": 1081,
+        "wins": 455,
+        "win_rate": 0.4209
+      },
+      {
+        "card_id": "scavenger",
+        "name": "\u0421\u0431\u043E\u0440\u0449\u0438\u043A \u0445\u043B\u0430\u043C\u0430",
+        "played": 1100,
+        "matches_played": 1100,
+        "wins": 518,
+        "win_rate": 0.4709
+      },
+      {
+        "card_id": "wind_up_soldier",
+        "name": "\u0417\u0430\u0432\u043E\u0434\u043D\u043E\u0439 \u0441\u043E\u043B\u0434\u0430\u0442",
+        "played": 1097,
+        "matches_played": 1097,
+        "wins": 638,
+        "win_rate": 0.5816
+      },
+      {
+        "card_id": "battle_mage",
+        "name": "\u0411\u043E\u0435\u0432\u043E\u0439 \u043C\u0430\u0433",
+        "played": 1979,
+        "matches_played": 1979,
+        "wins": 988,
+        "win_rate": 0.4992
+      },
+      {
+        "card_id": "berserker",
+        "name": "\u0411\u0435\u0440\u0441\u0435\u0440\u043A",
+        "played": 1978,
+        "matches_played": 1978,
+        "wins": 985,
+        "win_rate": 0.498
+      },
+      {
+        "card_id": "dawn_knight",
+        "name": "\u0420\u044B\u0446\u0430\u0440\u044C \u0437\u0430\u0440\u0438",
+        "played": 2000,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "scrap_golem",
+        "name": "\u0413\u043E\u043B\u0435\u043C \u0438\u0437 \u043B\u043E\u043C\u0430",
+        "played": 1999,
+        "matches_played": 1999,
+        "wins": 1000,
+        "win_rate": 0.5003
+      },
+      {
+        "card_id": "rally",
+        "name": "\u041E\u0431\u0449\u0438\u0439 \u0441\u0431\u043E\u0440",
+        "played": 11115,
+        "matches_played": 1960,
+        "wins": 985,
+        "win_rate": 0.5026
+      },
+      {
+        "card_id": "hoard",
+        "name": "\u041D\u0430\u043A\u043E\u043F\u043B\u0435\u043D\u0438\u0435",
+        "played": 11611,
+        "matches_played": 1982,
+        "wins": 998,
+        "win_rate": 0.5035
+      },
+      {
+        "card_id": "fire_volley",
+        "name": "\u041E\u0433\u043D\u0435\u043D\u043D\u044B\u0439 \u0437\u0430\u043B\u043F",
+        "played": 12542,
+        "matches_played": 1989,
+        "wins": 994,
+        "win_rate": 0.4997
+      },
+      {
+        "card_id": "forge",
+        "name": "\u041A\u0443\u0437\u043D\u0438\u0446\u0430",
+        "played": 1970,
+        "matches_played": 1970,
+        "wins": 985,
+        "win_rate": 0.5
+      }
+    ]
+  },
+  {
+    "deck_a": "mechs",
+    "deck_b": "pack",
+    "matches": 1000,
+    "seed": 1,
+    "wins_a": 977,
+    "wins_b": 22,
+    "draws": 1,
+    "average_rounds": 15.315,
+    "combats": 15315,
+    "draw_combats": 2597,
+    "draw_combat_share": 0.1696,
+    "average_attacks": 8.1773,
+    "max_attacks": 17,
+    "exceptions": 0,
+    "exception_messages": [],
+    "limit_combats": 0,
+    "warnings": 0,
+    "cards": [
+      {
+        "card_id": "ferret",
+        "name": "\u0420\u044B\u0436\u0438\u0439 \u0445\u043E\u0440\u0451\u043A",
+        "played": 838,
+        "matches_played": 838,
+        "wins": 20,
+        "win_rate": 0.0239
+      },
+      {
+        "card_id": "apprentice",
+        "name": "\u041F\u043E\u0434\u043C\u0430\u0441\u0442\u0435\u0440\u044C\u0435",
+        "played": 821,
+        "matches_played": 821,
+        "wins": 22,
+        "win_rate": 0.0268
+      },
+      {
+        "card_id": "shieldbearer",
+        "name": "\u0429\u0438\u0442\u043E\u043D\u043E\u0441\u0435\u0446",
+        "played": 300,
+        "matches_played": 300,
+        "wins": 295,
+        "win_rate": 0.9833
+      },
+      {
+        "card_id": "venom_toad",
+        "name": "\u042F\u0434\u043E\u0432\u0438\u0442\u0430\u044F \u0436\u0430\u0431\u0430",
+        "played": 864,
+        "matches_played": 864,
+        "wins": 18,
+        "win_rate": 0.0208
+      },
+      {
+        "card_id": "watchdog",
+        "name": "\u0421\u0442\u043E\u0440\u043E\u0436\u0435\u0432\u043E\u0439 \u043F\u0451\u0441",
+        "played": 859,
+        "matches_played": 859,
+        "wins": 22,
+        "win_rate": 0.0256
+      },
+      {
+        "card_id": "tinkerer",
+        "name": "\u041C\u0435\u0445\u0430\u043D\u0438\u043A-\u0441\u0430\u043C\u043E\u0443\u0447\u043A\u0430",
+        "played": 583,
+        "matches_played": 526,
+        "wins": 513,
+        "win_rate": 0.9753
+      },
+      {
+        "card_id": "wolf",
+        "name": "\u041C\u0430\u0442\u0451\u0440\u044B\u0439 \u0432\u043E\u043B\u043A",
+        "played": 872,
+        "matches_played": 872,
+        "wins": 13,
+        "win_rate": 0.0149
+      },
+      {
+        "card_id": "harpy",
+        "name": "\u0413\u0430\u0440\u043F\u0438\u044F",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 22,
+        "win_rate": 0.022
+      },
+      {
+        "card_id": "axeman",
+        "name": "\u0421\u0435\u043A\u0438\u0440\u043E\u043D\u043E\u0441\u0435\u0446",
+        "played": 519,
+        "matches_played": 519,
+        "wins": 504,
+        "win_rate": 0.9711
+      },
+      {
+        "card_id": "whirlblade",
+        "name": "\u0412\u0438\u0445\u0440\u0435\u0432\u043E\u0439 \u043A\u043B\u0438\u043D\u043E\u043A",
+        "played": 541,
+        "matches_played": 541,
+        "wins": 521,
+        "win_rate": 0.963
+      },
+      {
+        "card_id": "scavenger",
+        "name": "\u0421\u0431\u043E\u0440\u0449\u0438\u043A \u0445\u043B\u0430\u043C\u0430",
+        "played": 561,
+        "matches_played": 561,
+        "wins": 549,
+        "win_rate": 0.9786
+      },
+      {
+        "card_id": "wind_up_soldier",
+        "name": "\u0417\u0430\u0432\u043E\u0434\u043D\u043E\u0439 \u0441\u043E\u043B\u0434\u0430\u0442",
+        "played": 561,
+        "matches_played": 561,
+        "wins": 554,
+        "win_rate": 0.9875
+      },
+      {
+        "card_id": "battle_mage",
+        "name": "\u0411\u043E\u0435\u0432\u043E\u0439 \u043C\u0430\u0433",
+        "played": 989,
+        "matches_played": 989,
+        "wins": 966,
+        "win_rate": 0.9767
+      },
+      {
+        "card_id": "iron_boar",
+        "name": "\u0411\u0440\u043E\u043D\u0435\u0432\u0435\u043F\u0440\u044C",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 22,
+        "win_rate": 0.022
+      },
+      {
+        "card_id": "pack_leader",
+        "name": "\u0412\u043E\u0436\u0430\u043A \u0441\u0442\u0430\u0438",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 22,
+        "win_rate": 0.022
+      },
+      {
+        "card_id": "berserker",
+        "name": "\u0411\u0435\u0440\u0441\u0435\u0440\u043A",
+        "played": 992,
+        "matches_played": 992,
+        "wins": 970,
+        "win_rate": 0.9778
+      },
+      {
+        "card_id": "dawn_knight",
+        "name": "\u0420\u044B\u0446\u0430\u0440\u044C \u0437\u0430\u0440\u0438",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 977,
+        "win_rate": 0.977
+      },
+      {
+        "card_id": "scrap_golem",
+        "name": "\u0413\u043E\u043B\u0435\u043C \u0438\u0437 \u043B\u043E\u043C\u0430",
+        "played": 1000,
+        "matches_played": 1000,
+        "wins": 977,
+        "win_rate": 0.977
+      },
+      {
+        "card_id": "blessing_of_might",
+        "name": "\u0411\u043B\u0430\u0433\u043E\u0441\u043B\u043E\u0432\u0435\u043D\u0438\u0435 \u0441\u0438\u043B\u044B",
+        "played": 3863,
+        "matches_played": 990,
+        "wins": 20,
+        "win_rate": 0.0202
+      },
+      {
+        "card_id": "tempering",
+        "name": "\u0417\u0430\u043A\u0430\u043B\u043A\u0430",
+        "played": 3428,
+        "matches_played": 984,
+        "wins": 19,
+        "win_rate": 0.0193
+      },
+      {
+        "card_id": "holy_veil",
+        "name": "\u0421\u0432\u044F\u0442\u043E\u0439 \u043F\u043E\u043A\u0440\u043E\u0432",
+        "played": 3461,
+        "matches_played": 985,
+        "wins": 20,
+        "win_rate": 0.0203
+      },
+      {
+        "card_id": "rally",
+        "name": "\u041E\u0431\u0449\u0438\u0439 \u0441\u0431\u043E\u0440",
+        "played": 6091,
+        "matches_played": 983,
+        "wins": 964,
+        "win_rate": 0.9807
+      },
+      {
+        "card_id": "hoard",
+        "name": "\u041D\u0430\u043A\u043E\u043F\u043B\u0435\u043D\u0438\u0435",
+        "played": 6286,
+        "matches_played": 994,
+        "wins": 973,
+        "win_rate": 0.9789
+      },
+      {
+        "card_id": "fire_volley",
+        "name": "\u041E\u0433\u043D\u0435\u043D\u043D\u044B\u0439 \u0437\u0430\u043B\u043F",
+        "played": 6797,
+        "matches_played": 991,
+        "wins": 969,
+        "win_rate": 0.9778
+      },
+      {
+        "card_id": "war_hymn",
+        "name": "\u0411\u043E\u0435\u0432\u043E\u0439 \u0433\u0438\u043C\u043D",
+        "played": 4394,
+        "matches_played": 996,
+        "wins": 22,
+        "win_rate": 0.0221
+      },
+      {
+        "card_id": "mirror_shield",
+        "name": "\u0417\u0435\u0440\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0449\u0438\u0442",
+        "played": 4375,
+        "matches_played": 998,
+        "wins": 22,
+        "win_rate": 0.022
+      },
+      {
+        "card_id": "riposte",
+        "name": "\u041E\u0442\u0432\u0435\u0442\u043D\u044B\u0439 \u0443\u0434\u0430\u0440",
+        "played": 3823,
+        "matches_played": 995,
+        "wins": 22,
+        "win_rate": 0.0221
+      },
+      {
+        "card_id": "forge",
+        "name": "\u041A\u0443\u0437\u043D\u0438\u0446\u0430",
+        "played": 983,
+        "matches_played": 983,
+        "wins": 964,
+        "win_rate": 0.9807
+      },
+      {
+        "card_id": "sanctuary",
+        "name": "\u0421\u0432\u044F\u0442\u0438\u043B\u0438\u0449\u0435",
+        "played": 993,
+        "matches_played": 993,
+        "wins": 22,
+        "win_rate": 0.0222
+      }
+    ]
+  },
+  {
+    "deck_a": "pack",
+    "deck_b": "pack",
+    "matches": 1000,
+    "seed": 1,
+    "wins_a": 496,
+    "wins_b": 504,
+    "draws": 0,
+    "average_rounds": 21.724,
+    "combats": 21724,
+    "draw_combats": 4570,
+    "draw_combat_share": 0.2104,
+    "average_attacks": 9.727,
+    "max_attacks": 20,
+    "exceptions": 0,
+    "exception_messages": [],
+    "limit_combats": 0,
+    "warnings": 0,
+    "cards": [
+      {
+        "card_id": "ferret",
+        "name": "\u0420\u044B\u0436\u0438\u0439 \u0445\u043E\u0440\u0451\u043A",
+        "played": 1676,
+        "matches_played": 1676,
+        "wins": 809,
+        "win_rate": 0.4827
+      },
+      {
+        "card_id": "apprentice",
+        "name": "\u041F\u043E\u0434\u043C\u0430\u0441\u0442\u0435\u0440\u044C\u0435",
+        "played": 1649,
+        "matches_played": 1649,
+        "wins": 775,
+        "win_rate": 0.47
+      },
+      {
+        "card_id": "venom_toad",
+        "name": "\u042F\u0434\u043E\u0432\u0438\u0442\u0430\u044F \u0436\u0430\u0431\u0430",
+        "played": 1720,
+        "matches_played": 1720,
+        "wins": 910,
+        "win_rate": 0.5291
+      },
+      {
+        "card_id": "watchdog",
+        "name": "\u0421\u0442\u043E\u0440\u043E\u0436\u0435\u0432\u043E\u0439 \u043F\u0451\u0441",
+        "played": 1709,
+        "matches_played": 1709,
+        "wins": 955,
+        "win_rate": 0.5588
+      },
+      {
+        "card_id": "wolf",
+        "name": "\u041C\u0430\u0442\u0451\u0440\u044B\u0439 \u0432\u043E\u043B\u043A",
+        "played": 1734,
+        "matches_played": 1734,
+        "wins": 854,
+        "win_rate": 0.4925
+      },
+      {
+        "card_id": "harpy",
+        "name": "\u0413\u0430\u0440\u043F\u0438\u044F",
+        "played": 2000,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "iron_boar",
+        "name": "\u0411\u0440\u043E\u043D\u0435\u0432\u0435\u043F\u0440\u044C",
+        "played": 2000,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "pack_leader",
+        "name": "\u0412\u043E\u0436\u0430\u043A \u0441\u0442\u0430\u0438",
+        "played": 2000,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "blessing_of_might",
+        "name": "\u0411\u043B\u0430\u0433\u043E\u0441\u043B\u043E\u0432\u0435\u043D\u0438\u0435 \u0441\u0438\u043B\u044B",
+        "played": 12630,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "tempering",
+        "name": "\u0417\u0430\u043A\u0430\u043B\u043A\u0430",
+        "played": 11838,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "holy_veil",
+        "name": "\u0421\u0432\u044F\u0442\u043E\u0439 \u043F\u043E\u043A\u0440\u043E\u0432",
+        "played": 11803,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "war_hymn",
+        "name": "\u0411\u043E\u0435\u0432\u043E\u0439 \u0433\u0438\u043C\u043D",
+        "played": 13718,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "mirror_shield",
+        "name": "\u0417\u0435\u0440\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0449\u0438\u0442",
+        "played": 13771,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "riposte",
+        "name": "\u041E\u0442\u0432\u0435\u0442\u043D\u044B\u0439 \u0443\u0434\u0430\u0440",
+        "played": 8637,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      },
+      {
+        "card_id": "sanctuary",
+        "name": "\u0421\u0432\u044F\u0442\u0438\u043B\u0438\u0449\u0435",
+        "played": 2000,
+        "matches_played": 2000,
+        "wins": 1000,
+        "win_rate": 0.5
+      }
+    ]
+  }
+]

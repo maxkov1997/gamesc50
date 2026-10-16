@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Бот (12.4). Зависит только от core. -->
+  <PropertyGroup>
+    <RootNamespace>Game.Ai</RootNamespace>
+    <AssemblyName>Game.Ai</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../core/Game.Core.csproj" />
+  </ItemGroup>
+</Project>

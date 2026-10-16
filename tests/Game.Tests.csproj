@@ -15,6 +15,8 @@
   <ItemGroup>
     <ProjectReference Include="../core/Game.Core.csproj" />
     <ProjectReference Include="../content/src/Game.Content.csproj" />
+    <ProjectReference Include="../ai/Game.Ai.csproj" />
+    <ProjectReference Include="../sim/Game.Sim.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- Данные content/ копируются рядом с тестами. -->

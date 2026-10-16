@@ -37,6 +37,12 @@ public static class StateSerializer
 
     public static string SerializeSnapshot(CombatSnapshot snapshot) => JsonSerializer.Serialize(snapshot, Options);
 
+    public static string SerializeRecord(MatchRecord record) => JsonSerializer.Serialize(record, Options);
+
+    public static MatchRecord DeserializeRecord(string json) =>
+        JsonSerializer.Deserialize<MatchRecord>(json, Options)
+        ?? throw new JsonException("Пустая запись матча");
+
     /// <summary>Глубокая копия через JSON — для снимка боя (8.1).</summary>
     public static T Clone<T>(T value) =>
         JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(value, Options), Options)
