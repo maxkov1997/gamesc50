@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Tests", "tests\Game.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Ai", "ai\Game.Ai.csproj", "{B0DAF857-B2B9-4750-85E4-DEE2883326B3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "view", "view", "{CC9123F9-F176-4317-B3C5-886A496B2AE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Client", "view\client\Game.Client.csproj", "{29BFF9C0-D324-4D4C-B52A-D75601E7BB85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,8 +48,13 @@ Global
 		{B0DAF857-B2B9-4750-85E4-DEE2883326B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0DAF857-B2B9-4750-85E4-DEE2883326B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0DAF857-B2B9-4750-85E4-DEE2883326B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29BFF9C0-D324-4D4C-B52A-D75601E7BB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29BFF9C0-D324-4D4C-B52A-D75601E7BB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29BFF9C0-D324-4D4C-B52A-D75601E7BB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29BFF9C0-D324-4D4C-B52A-D75601E7BB85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D24224A0-52A9-4ED5-AF20-20AA76DE9B66} = {4920F11B-8C7B-484D-9035-B407A4882FBE}
+		{29BFF9C0-D324-4D4C-B52A-D75601E7BB85} = {CC9123F9-F176-4317-B3C5-886A496B2AE6}
 	EndGlobalSection
 EndGlobal

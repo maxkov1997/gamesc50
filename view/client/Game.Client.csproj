@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Логика интерфейса без движка (12.6): сессия против бота, видимость, подсказки целей, проигрывание лога, реплей.
+       Godot-проект view/godot — тонкий слой поверх неё. -->
+  <PropertyGroup>
+    <RootNamespace>Game.Client</RootNamespace>
+    <AssemblyName>Game.Client</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../core/Game.Core.csproj" />
+    <ProjectReference Include="../../content/src/Game.Content.csproj" />
+    <ProjectReference Include="../../ai/Game.Ai.csproj" />
+  </ItemGroup>
+</Project>

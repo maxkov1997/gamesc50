@@ -21,29 +21,103 @@ public static class ContentLoader
 
     private static readonly string[] DeckFields = { "id", "name", "cards" };
 
-    public static GameData LoadDirectory(string contentDir)
+    public const string StringsFile = "strings.json";
+
+    public static GameData LoadDirectory(string contentDir) => Load(new DirectorySource(contentDir));
+
+    public static GameData Load(IContentSource source)
     {
         var errors = new List<ValidationError>();
-        var config = ParseConfig(File.ReadAllText(System.IO.Path.Combine(contentDir, ConfigFile)), ConfigFile, errors);
-        var cards = ParseCards(File.ReadAllText(System.IO.Path.Combine(contentDir, CardsFile)), CardsFile, errors);
+        var config = ParseConfig(source.Read(ConfigFile), ConfigFile, errors);
+        var cards = ParseCards(source.Read(CardsFile), CardsFile, errors);
 
         var decks = new List<DeckList>();
-        var deckFiles = Directory.GetFiles(System.IO.Path.Combine(contentDir, DecksDir), "*.json")
-            .OrderBy(f => f, StringComparer.Ordinal)
-            .ToList();
-        foreach (var file in deckFiles)
+        foreach (var file in source.List(DecksDir, ".json"))
         {
-            string source = $"{DecksDir}/{System.IO.Path.GetFileName(file)}";
-            var deck = ParseDeck(File.ReadAllText(file), source, cards, config, errors);
+            var deck = ParseDeck(source.Read(file), file, cards, config, errors);
             if (deck == null) continue;
             if (decks.Any(d => d.Id == deck.Id))
-                errors.Add(new(ErrorCodes.DuplicateId, source, $"колода с id «{deck.Id}» уже есть"));
+                errors.Add(new(ErrorCodes.DuplicateId, file, $"колода с id «{deck.Id}» уже есть"));
             else
                 decks.Add(deck);
         }
 
         if (errors.Count > 0) throw new GameDataException(errors);
         return new GameData { Config = config!, Cards = cards!, Decks = decks };
+    }
+
+    public static UiStrings LoadStrings(IContentSource source) => LoadStrings(source.Read(StringsFile));
+
+    public static UiStrings LoadStrings(string json) =>
+        ThrowIfErrors(errors => ParseStrings(json, StringsFile, errors));
+
+    private static readonly string[] StringSections = { "ui", "keywords", "tags", "card_types", "log" };
+
+    private static UiStrings? ParseStrings(string json, string source, List<ValidationError> errors)
+    {
+        if (Parse(json, source, errors) is not { } root) return null;
+        if (root.ValueKind != JsonValueKind.Object)
+        {
+            errors.Add(new(ErrorCodes.InvalidType, source, "файл строк должен быть объектом"));
+            return null;
+        }
+        var r = new ObjectReader(root, source, errors);
+        r.CheckFields(StringSections, StringSections);
+
+        Dictionary<string, string> Section(string name)
+        {
+            var result = new Dictionary<string, string>(StringComparer.Ordinal);
+            if (!root.TryGetProperty(name, out var el)) { r.Error(ErrorCodes.MissingField, $"нет раздела «{name}»", name); return result; }
+            if (el.ValueKind != JsonValueKind.Object) { r.Error(ErrorCodes.InvalidType, $"раздел «{name}» должен быть объектом", name); return result; }
+            foreach (var prop in el.EnumerateObject())
+            {
+                if (prop.Value.ValueKind == JsonValueKind.String) result[prop.Name] = prop.Value.GetString()!;
+                else r.Error(ErrorCodes.InvalidType, "ожидалась строка", $"{name}.{prop.Name}");
+            }
+            return result;
+        }
+
+        var keywords = new Dictionary<string, KeywordText>(StringComparer.Ordinal);
+        if (r.Object("keywords", true) is { } kr && root.GetProperty("keywords") is var kel)
+        {
+            foreach (var prop in kel.EnumerateObject())
+            {
+                if (prop.Value.ValueKind != JsonValueKind.Object)
+                {
+                    kr.Error(ErrorCodes.InvalidType, "ожидался объект { name, text }", prop.Name);
+                    continue;
+                }
+                var k = new ObjectReader(prop.Value, $"{kr.Path}.{prop.Name}", errors);
+                k.CheckFields(new[] { "name", "text" }, new[] { "name", "text" });
+                if (Registry.FindKeyword(prop.Name) == null)
+                    kr.Error(ErrorCodes.UnknownKeyword, $"неизвестное ключевое слово «{prop.Name}»", prop.Name);
+                keywords[prop.Name] = new KeywordText(k.String("name", true) ?? "", k.String("text", true) ?? "");
+            }
+        }
+
+        var strings = new UiStrings
+        {
+            Ui = Section("ui"),
+            Keywords = keywords,
+            Tags = Section("tags"),
+            CardTypes = Section("card_types"),
+            Log = Section("log"),
+        };
+
+        // Тексты нужны для всего, что видит игрок.
+        foreach (var k in Registry.KeywordList)
+            if (!strings.Keywords.ContainsKey(k.Id))
+                errors.Add(new(ErrorCodes.MissingField, $"{source}.keywords", $"нет текста для ключевого слова «{k.Id}»"));
+        foreach (var tag in Registry.TagList)
+            if (!strings.Tags.ContainsKey(tag))
+                errors.Add(new(ErrorCodes.MissingField, $"{source}.tags", $"нет названия племени «{tag}»"));
+        foreach (CardType type in Enum.GetValues<CardType>())
+        {
+            string id = JsonNamingPolicy.SnakeCaseLower.ConvertName(type.ToString());
+            if (!strings.CardTypes.ContainsKey(id))
+                errors.Add(new(ErrorCodes.MissingField, $"{source}.card_types", $"нет названия типа карты «{id}»"));
+        }
+        return strings;
     }
 
     public static GameConfig LoadConfig(string json) =>

@@ -32,6 +32,9 @@ public sealed class CombatResult
 
     /// <summary>Сработавшие боевые заклинания и секреты по сторонам (индекс — сторона): после боя в сброс.</summary>
     public List<List<int>> SpentCards { get; init; } = new() { new(), new() };
+
+    /// <summary>Снимки сторон в конце боя — для проверки, что лог восстанавливает бой (12.3).</summary>
+    public List<SideView> FinalSides { get; init; } = new();
 }
 
 public static class Combat
@@ -122,6 +125,7 @@ public sealed class CombatEngine
             Type = EventTypes.CombatStarted, Side = first, Round = _round,
             Sides = _sides.Select(p => SideView.Of(_db, p)).ToList(),
         });
+        _r.TrackLog();
 
         StartOfCombat(first);
         string? reason = _r.LimitReached ? CombatReasons.Limit : null;
@@ -310,6 +314,7 @@ public sealed class CombatEngine
             HeroDamage = damage,
             PermanentDeltas = _r.PermanentDeltas,
             SpentCards = _r.SpentCards.Select(l => l.ToList()).ToList(),
+            FinalSides = _sides.Select(p => SideView.Of(_db, p)).ToList(),
         };
     }
 }

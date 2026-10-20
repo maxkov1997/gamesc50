@@ -17,6 +17,7 @@
     <ProjectReference Include="../content/src/Game.Content.csproj" />
     <ProjectReference Include="../ai/Game.Ai.csproj" />
     <ProjectReference Include="../sim/Game.Sim.csproj" />
+    <ProjectReference Include="../view/client/Game.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <!-- Данные content/ копируются рядом с тестами. -->

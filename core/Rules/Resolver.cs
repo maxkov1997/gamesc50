@@ -229,6 +229,7 @@ internal sealed class Resolver
         }
         foreach (var p in _sides)
             p?.Board.RemoveAll(c => c.Tombstone);
+        RefreshLog();
     }
 
     private bool SourceLeft(PendingTrigger t)
@@ -460,12 +461,55 @@ internal sealed class Resolver
 
     // ---------- Операции (11.2) ----------
 
-    private void StatsChanged(PlayerState p, Creature c, string duration) =>
+    private void StatsChanged(PlayerState p, Creature c, string? duration, string? reason = null) =>
         Events.Add(new GameEvent
         {
             Type = EventTypes.StatsChanged, Side = p.Side, EntityId = c.EntityId,
-            Attack = Stats.Attack(_db, p, c), Health = Stats.Health(_db, c), Duration = duration,
+            Attack = Stats.Attack(_db, p, c), Health = Stats.Health(_db, c), Duration = duration, Reason = reason,
+            Creature = CreatureView.Of(_db, p, c),
         });
+
+    // ---------- Лог для интерфейса (12.3) ----------
+
+    public const string RefreshReason = "refresh";
+
+    private LogBoard? _log;
+    private int _logged;
+
+    /// <summary>Начать вести модель стола по логу: с этого момента в конце каждой очереди лог сверяется с боем.</summary>
+    public void TrackLog()
+    {
+        _log = new LogBoard();
+        _logged = 0;
+        SyncLog();
+    }
+
+    private void SyncLog()
+    {
+        if (_log == null) return;
+        for (; _logged < Events.Count; _logged++) _log.Apply(Events[_logged]);
+    }
+
+    /// <summary>
+    /// Изменения, о которых событий не было (ауры появились или пропали вместе с источником), дописываются
+    /// событием stats_changed с полным снимком существа и причиной refresh.
+    /// </summary>
+    private void RefreshLog()
+    {
+        if (_log == null || !_log.Started) return;
+        SyncLog();
+        foreach (var side in new[] { Core.Side.A, Core.Side.B })
+        {
+            var p = Side(side);
+            foreach (var c in p.Alive)
+            {
+                var logged = _log.Find(c.EntityId);
+                if (logged == null || LogBoard.Same(logged, CreatureView.Of(_db, p, c))) continue;
+                StatsChanged(p, c, null, RefreshReason);
+            }
+        }
+        SyncLog();
+    }
 
     /// <summary>7.3: эффекты подготовки — всегда навсегда; эффекты боя — до конца боя, если не сказано «навсегда».</summary>
     private string DurationOf(EffectDef e) =>
