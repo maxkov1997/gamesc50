@@ -36,6 +36,7 @@ public static class UiKeys
     public const string NextRound = "next_round";
     public const string Skip = "skip";
     public const string Speed = "speed";
+    public const string SpeedX = "speed_x";
     public const string ChooseTarget = "choose_target";
     public const string ChoosePosition = "choose_position";
     public const string Cancel = "cancel";

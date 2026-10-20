@@ -35,12 +35,15 @@ public sealed class CombatPlayback
     public bool Done => Position >= Events.Count;
     public GameEvent? Current { get; private set; }
 
-    /// <summary>events — события runCombat (или simulateCombat), начиная с combat_started.</summary>
+    /// <summary>
+    /// events — события runCombat (или simulateCombat). combat_started применяется сразу: стол виден с начала боя.
+    /// </summary>
     public CombatPlayback(IReadOnlyList<GameEvent> events)
     {
         int start = events.ToList().FindIndex(e => e.Type == EventTypes.CombatStarted);
         if (start < 0) throw new ArgumentException("В событиях нет combat_started", nameof(events));
         Events = events.Skip(start).ToList();
+        Next();
     }
 
     /// <summary>Следующее событие: применяется к столу лога и возвращается для анимации.</summary>

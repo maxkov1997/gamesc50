@@ -144,6 +144,10 @@ public class ClientTests
         skipped.SkipToEnd();
 
         Assert.True(shown > 0);
+        // Стол виден сразу, ещё до первого шага.
+        var fresh = new CombatPlayback(events);
+        Assert.True(fresh.Board.Started);
+        Assert.Equal(EventTypes.CombatStarted, fresh.Current!.Type);
         Assert.Equal(StateSerializerViews(stepped.Board), StateSerializerViews(skipped.Board));
         var attack = events.First(e => e.Type == EventTypes.CombatStarted);
         Assert.Equal(CombatPlayback.DurationMs(attack, 1) / 4, CombatPlayback.DurationMs(attack, 4));

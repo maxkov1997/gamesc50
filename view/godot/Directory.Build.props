@@ -1,0 +1,8 @@
+<Project>
+  <!-- Отдельно от корневого Directory.Build.props: сгенерированный Godot код не обязан проходить TreatWarningsAsErrors. -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>

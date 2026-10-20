@@ -1,0 +1,21 @@
+<Project Sdk="Godot.NET.Sdk/4.6.2">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>Game.View</RootNamespace>
+    <!-- Godot.Timer, Godot.FileAccess и др. конфликтуют с System.* — usings пишем явно. -->
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../client/Game.Client.csproj" />
+  </ItemGroup>
+  <!-- Данные игры (content/) копируются в ресурсы проекта: игра читает их через res://content. -->
+  <ItemGroup>
+    <ContentJson Include="../../content/*.json" />
+    <ContentDecks Include="../../content/decks/*.json" />
+  </ItemGroup>
+  <Target Name="CopyGameContent" BeforeTargets="BeforeBuild">
+    <Copy SourceFiles="@(ContentJson)" DestinationFolder="$(MSBuildProjectDirectory)/content" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ContentDecks)" DestinationFolder="$(MSBuildProjectDirectory)/content/decks" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

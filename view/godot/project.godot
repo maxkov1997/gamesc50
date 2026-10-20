@@ -1,0 +1,19 @@
+; Godot 4 (.NET). Интерфейс M5 (12.6): тонкий слой над view/client.
+config_version=5
+
+[application]
+
+config/name="gamesc50"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.6", "C#")
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=960
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[dotnet]
+
+project/assembly_name="GameView"
