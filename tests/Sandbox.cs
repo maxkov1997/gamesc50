@@ -84,6 +84,7 @@ public sealed class Sandbox
     public int PutField(string cardId, int slot, Side side = Side.A)
     {
         int id = NewInstance(side, cardId);
+        P(side).GetInstance(id).Timestamp = Entities.Stamp(P(side));
         P(side).Field[slot] = id;
         return id;
     }
@@ -100,6 +101,7 @@ public sealed class Sandbox
     public int Enchant(Creature c, string cardId, Side side = Side.A)
     {
         int id = NewInstance(side, cardId);
+        P(side).GetInstance(id).Timestamp = Entities.Stamp(P(side));
         c.Enchantments.Add(id);
         return id;
     }

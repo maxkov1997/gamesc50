@@ -25,10 +25,10 @@ internal sealed class CardParser
         .Concat(new[] { "attack", "health", "tags", "keywords", "token", "abilities", "play_target", "effects", "condition", "attach", "grants" })
         .ToArray();
 
-    private static readonly string[] AbilityFields = { "trigger", "effects", "count", "cost", "target", "aura" };
+    private static readonly string[] AbilityFields = { "trigger", "effects", "count", "cost", "target", "aura", "watch" };
     private static readonly string[] AuraFields = { "target", "attack", "keywords" };
     private static readonly string[] TargetFields = { "side", "tag", "not_self" };
-    private static readonly string[] ConditionFields = { "event", "target" };
+    private static readonly string[] ConditionFields = { "event", "target", "attacker" };
     private static readonly string[] FilterFields = { "keyword", "no_keyword", "tag" };
     private static readonly string[] GrantsFields = { "attack", "keywords", "abilities" };
     private static readonly string[] SelectorFields = { "pick", "side", "count", "tag", "keyword", "no_keyword", "not_self" };
@@ -134,6 +134,7 @@ internal sealed class CardParser
             Cost = r.Int("cost", false),
             Target = r.Object("target", false) is { } t ? ParseTarget(t) : null,
             Aura = r.Object("aura", false) is { } a ? ParseAura(a) : null,
+            Watch = r.Object("watch", false) is { } w ? ParseFilter(w) : null,
         };
     }
 
@@ -162,18 +163,23 @@ internal sealed class CardParser
     private ConditionDef ParseCondition(ObjectReader r)
     {
         r.CheckFields(ConditionFields, ConditionFields);
-        FilterDef? filter = null;
-        if (r.Object("target", false) is { } f)
+        return new ConditionDef
         {
-            f.CheckFields(FilterFields, FilterFields);
-            filter = new FilterDef
-            {
-                Keyword = f.String("keyword", false),
-                NoKeyword = f.String("no_keyword", false),
-                Tag = f.String("tag", false),
-            };
-        }
-        return new ConditionDef { Event = r.String("event", true) ?? "", Target = filter };
+            Event = r.String("event", true) ?? "",
+            Target = r.Object("target", false) is { } t ? ParseFilter(t) : null,
+            Attacker = r.Object("attacker", false) is { } a ? ParseFilter(a) : null,
+        };
+    }
+
+    private static FilterDef ParseFilter(ObjectReader f)
+    {
+        f.CheckFields(FilterFields, FilterFields);
+        return new FilterDef
+        {
+            Keyword = f.String("keyword", false),
+            NoKeyword = f.String("no_keyword", false),
+            Tag = f.String("tag", false),
+        };
     }
 
     private GrantsDef ParseGrants(ObjectReader r)

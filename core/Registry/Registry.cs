@@ -13,6 +13,8 @@ public sealed record KeywordSpec(string Id, bool Static, bool ForCreatures, bool
 /// <param name="NeedsCost">Нужен параметр cost (Способность).</param>
 /// <param name="IsAura">Вместо effects — объект aura.</param>
 /// <param name="IsPlayTrigger">«При розыгрыше» — на него действуют правила 11.6 про цикл отзыва.</param>
+/// <param name="PerCreature">Триггер «этого существа». У чар на поле такая способность выдаётся
+/// каждому подходящему существу своей стороны (фильтр watch).</param>
 public sealed record TriggerSpec(
     string Id,
     Phase Phase,
@@ -20,7 +22,8 @@ public sealed record TriggerSpec(
     bool NeedsCount = false,
     bool NeedsCost = false,
     bool IsAura = false,
-    bool IsPlayTrigger = false);
+    bool IsPlayTrigger = false,
+    bool PerCreature = false);
 
 /// <summary>Условие секрета (7.2).</summary>
 public sealed record ConditionSpec(string Id);
@@ -145,17 +148,18 @@ public static class Registry
 
     public static readonly IReadOnlyList<TriggerSpec> TriggerList = new TriggerSpec[]
     {
-        // Решено (QUESTIONS.md, Q3): любой триггер допустим и у существ, и у чар на поле.
-        new(Triggers.OnPlay, Phase.Planning, AllowsTarget: true, IsPlayTrigger: true),
-        new(Triggers.OnDeath, Phase.Both),
+        // Любой триггер допустим и у существ, и у чар на поле (Q3); триггеры «этого существа»
+        // у чар на поле выдаются существам (Q5).
+        new(Triggers.OnPlay, Phase.Planning, AllowsTarget: true, IsPlayTrigger: true, PerCreature: true),
+        new(Triggers.OnDeath, Phase.Both, PerCreature: true),
         new(Triggers.StartOfCombat, Phase.Combat),
-        new(Triggers.OnAttack, Phase.Combat),
-        new(Triggers.AfterDamaged, Phase.Combat),
+        new(Triggers.OnAttack, Phase.Combat, PerCreature: true),
+        new(Triggers.AfterDamaged, Phase.Combat, PerCreature: true),
         new(Triggers.FriendlyDied, Phase.Both),
-        new(Triggers.Avenge, Phase.Combat, NeedsCount: true),
+        new(Triggers.Avenge, Phase.Combat, NeedsCount: true, PerCreature: true),
         new(Triggers.RoundStart, Phase.Planning),
         new(Triggers.RoundEnd, Phase.Planning),
-        new(Triggers.Activated, Phase.Planning, AllowsTarget: true, NeedsCost: true),
+        new(Triggers.Activated, Phase.Planning, AllowsTarget: true, NeedsCost: true, PerCreature: true),
         new(Triggers.Aura, Phase.Both, IsAura: true),
     };
 

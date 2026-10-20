@@ -9,8 +9,11 @@ public static class Entities
     public static Creature NewCreature(PlayerState p, string cardId, int? instanceId)
     {
         int id = p.NextEntitySeq++ * 2 + (int)p.Side;
-        return new Creature { EntityId = id, InstanceId = instanceId, CardId = cardId };
+        return new Creature { EntityId = id, InstanceId = instanceId, CardId = cardId, Timestamp = Stamp(p) };
     }
+
+    /// <summary>Следующий timestamp стороны (7.4).</summary>
+    public static int Stamp(PlayerState p) => p.NextTimestamp++;
 }
 
 /// <summary>Недопустимое действие: состояние не меняется (12.2).</summary>

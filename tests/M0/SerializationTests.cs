@@ -54,11 +54,11 @@ public class SerializationTests
             EntityId = 2, InstanceId = a.Hand[0], CardId = "ferret",
             BonusAttack = 2, BonusHealth = 1, GainedKeywords = { "taunt" }, Enchantments = { a.Hand[1] },
         });
-        a.Board.Add(new Creature { EntityId = 4, CardId = "tok_spark", UsedAbilities = { 0 } });
+        a.Board.Add(new Creature { EntityId = 4, CardId = "tok_spark", UsedAbilities = { "own:0" } });
         a.Field[1] = a.Hand[2];
         a.BattleZone.Add(a.Hand[3]);
         a.Hand.Clear();
-        a.GetInstance(a.Board[0].InstanceId!.Value).UsedAbilities.Add(0);
+        a.GetInstance(a.Board[0].InstanceId!.Value).UsedAbilities.Add("own:0");
         a.ManaBonus = 2;
         state.Result = Outcome.Draw;
 

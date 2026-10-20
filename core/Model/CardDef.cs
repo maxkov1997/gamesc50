@@ -27,7 +27,7 @@ public sealed class CardDef
     public GrantsDef? Grants { get; init; }
 }
 
-/// <summary>Ability: { trigger, effects?, count?, cost?, target?, aura? } (11.1).</summary>
+/// <summary>Ability: { trigger, effects?, count?, cost?, target?, aura?, watch? } (11.1).</summary>
 public sealed class AbilityDef
 {
     public required string Trigger { get; init; }
@@ -37,6 +37,12 @@ public sealed class AbilityDef
     public int? Cost { get; init; }
     public TargetSpec? Target { get; init; }
     public AuraDef? Aura { get; init; }
+
+    /// <summary>
+    /// Только у чар на поле, для триггеров «этого существа»: каким существам своей стороны выдаётся способность.
+    /// Пустой фильтр — всем.
+    /// </summary>
+    public FilterDef? Watch { get; init; }
 }
 
 public sealed class AuraDef
@@ -54,11 +60,12 @@ public sealed class TargetSpec
     public bool NotSelf { get; init; }
 }
 
-/// <summary>Условие секрета: { event, target? }.</summary>
+/// <summary>Условие секрета: { event, target?, attacker? } — фильтры участников события event_target и event_attacker.</summary>
 public sealed class ConditionDef
 {
     public required string Event { get; init; }
     public FilterDef? Target { get; init; }
+    public FilterDef? Attacker { get; init; }
 }
 
 /// <summary>Фильтр участника события.</summary>

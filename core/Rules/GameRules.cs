@@ -221,7 +221,7 @@ public sealed class GameRules
             foreach (var a in Stats.Abilities(_db, p, c))
             {
                 if (a.Ability.Trigger != Registry.Triggers.Activated) continue;
-                if (UsedAbilities(p, c).Contains(a.Index) || a.Ability.Cost > p.Mana) continue;
+                if (UsedAbilities(p, c).Contains(a.Key) || a.Ability.Cost > p.Mana) continue;
                 if (a.Ability.Target == null) result.Add(new UseAbility(c.EntityId, a.Index));
                 else foreach (int t in ValidTargets(p, a.Ability.Target, c)) result.Add(new UseAbility(c.EntityId, a.Index, Target: t));
             }
@@ -247,7 +247,7 @@ public sealed class GameRules
             .ToList();
 
     /// <summary>Флаги «способность использована»: у карты — на экземпляре, у токена — на сущности (5.3).</summary>
-    private static List<int> UsedAbilities(PlayerState p, Creature c) =>
+    private static List<string> UsedAbilities(PlayerState p, Creature c) =>
         c.InstanceId is int id ? p.GetInstance(id).UsedAbilities : c.UsedAbilities;
 
     // ---------- Действия ----------
@@ -338,8 +338,8 @@ public sealed class GameRules
                     Effects = def.Effects, Chosen = pc.Target,
                 });
                 r.Run();
-                // GDD-QUESTION: заклинание уходит в сброс после разрешения эффекта, поэтому не попадает
-                // в прокрутку, вызванную собственным добором (Q7).
+                // 5.3: эффект и вызванные им триггеры разрешаются полностью, затем карта в сброс —
+                // поэтому она не попадает в прокрутку, вызванную собственным добором.
                 Zones.SpendSpell(_db, p, pc.InstanceId);
                 break;
             }
@@ -349,6 +349,7 @@ public sealed class GameRules
                 events.Add(Played());
                 break;
             case CardType.Enchantment when def.Attach == AttachKind.Creature:
+                p.GetInstance(pc.InstanceId).Timestamp = Entities.Stamp(p);
                 p.Board.Single(c => c.EntityId == pc.Target).Enchantments.Add(pc.InstanceId);
                 events.Add(Played());
                 break;
@@ -356,6 +357,7 @@ public sealed class GameRules
             {
                 int slot = pc.Slot!.Value;
                 if (p.Field[slot] is int replaced) p.Discard.Add(replaced);
+                p.GetInstance(pc.InstanceId).Timestamp = Entities.Stamp(p);
                 p.Field[slot] = pc.InstanceId;
                 events.Add(Played());
                 break;
@@ -368,7 +370,7 @@ public sealed class GameRules
         var c = p.Board.Single(x => x.EntityId == ua.EntityId);
         var a = Stats.Abilities(_db, p, c)[ua.AbilityIndex];
         p.Mana -= a.Ability.Cost ?? 0;
-        UsedAbilities(p, c).Add(a.Index);
+        UsedAbilities(p, c).Add(a.Key);
         events.Add(new GameEvent
         {
             Type = EventTypes.AbilityActivated, Side = p.Side, EntityId = c.EntityId,

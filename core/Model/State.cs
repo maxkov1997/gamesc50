@@ -17,8 +17,11 @@ public sealed class CardInstance
     public int InstanceId { get; set; }
     public string CardId { get; set; } = "";
 
-    /// <summary>Номера способностей, использованных в этом раунде (5.3). Сбрасывается в начале раунда.</summary>
-    public List<int> UsedAbilities { get; set; } = new();
+    /// <summary>Timestamp (7.4): когда чары последний раз легли на существо или в слот поля.</summary>
+    public int Timestamp { get; set; }
+
+    /// <summary>Ключи способностей (AbilityRef.Key), использованных в этом раунде (5.3). Сбрасывается в начале раунда.</summary>
+    public List<string> UsedAbilities { get; set; } = new();
 }
 
 /// <summary>
@@ -31,6 +34,9 @@ public sealed class Creature
     public int? InstanceId { get; set; }
     public string CardId { get; set; } = "";
 
+    /// <summary>Timestamp (7.4): когда сущность появилась на столе. Задаёт порядок аур в слое.</summary>
+    public int Timestamp { get; set; }
+
     /// <summary>Постоянные усиления поверх базы карты.</summary>
     public int BonusAttack { get; set; }
     public int BonusHealth { get; set; }
@@ -42,7 +48,7 @@ public sealed class Creature
     public List<int> Enchantments { get; set; } = new();
 
     /// <summary>Флаги способностей у токена (у карты они на экземпляре, 5.3).</summary>
-    public List<int> UsedAbilities { get; set; } = new();
+    public List<string> UsedAbilities { get; set; } = new();
 
     // ----- Только в копии боя (8.1): на постоянном столе всегда по умолчанию и не сериализуются. -----
 
@@ -114,6 +120,9 @@ public sealed class PlayerState
 
     /// <summary>Счётчик для entityId этой стороны (Entities.NewCreature). Свой у каждой стороны — изоляция 5.6.</summary>
     public int NextEntitySeq { get; set; } = 1;
+
+    /// <summary>Счётчик timestamp стороны (7.4). Свой у каждой стороны: ауры действуют только на свою сторону.</summary>
+    public int NextTimestamp { get; set; } = 1;
 
     public IEnumerable<Creature> Alive => Board.Where(c => c.IsAlive);
 

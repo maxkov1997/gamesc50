@@ -230,15 +230,16 @@ public class ContentValidationTests
         AssertError(ex, ErrorCodes.MissingField, "(bad).effects[0].count");
     }
 
-    /// <summary>Q3: у чар на поле допустим любой триггер.</summary>
+    /// <summary>Q3: у чар на поле допустим любой триггер; триггеры «этого существа» — с фильтром watch (Q5).</summary>
     [Fact]
     public void M0_field_enchantment_accepts_any_trigger()
     {
         foreach (var t in Registry.TriggerList.Where(t => !t.IsAura && !t.AllowsTarget && !t.NeedsCount && !t.NeedsCost))
         {
+            string watch = t.PerCreature ? "\"watch\": {}, " : "";
             var db = ContentLoader.LoadCards($$"""
                 [{{Spark}}, { "id": "ok", "name": "Чары", "type": "enchantment", "attach": "field", "cost": 1, "text": "",
-                  "abilities": [{ "trigger": "{{t.Id}}", "effects": [{ "op": "summon", "card": "tok_spark", "at": "center" }] }] }]
+                  "abilities": [{ "trigger": "{{t.Id}}", {{watch}}"effects": [{ "op": "summon", "card": "tok_spark", "at": "center" }] }] }]
                 """);
             Assert.Equal(2, db.Cards.Count);
         }

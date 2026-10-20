@@ -101,12 +101,13 @@ internal sealed class CardValidator
             Err(ErrorCodes.UnknownCondition, $"{path}.condition.event", $"неизвестное условие секрета «{cond.Event}»");
             return;
         }
-        if (cond.Target != null)
+        foreach (var (filter, name) in new[] { (cond.Target, "target"), (cond.Attacker, "attacker") })
         {
-            string fp = $"{path}.condition.target";
-            CheckKeyword(cond.Target.Keyword, fp + ".keyword");
-            CheckKeyword(cond.Target.NoKeyword, fp + ".no_keyword");
-            CheckTag(cond.Target.Tag, fp + ".tag");
+            if (filter == null) continue;
+            string fp = $"{path}.condition.{name}";
+            CheckKeyword(filter.Keyword, fp + ".keyword");
+            CheckKeyword(filter.NoKeyword, fp + ".no_keyword");
+            CheckTag(filter.Tag, fp + ".tag");
         }
         ValidateEffects(c.Effects, $"{path}.effects",
             new EffectContext(Phase.Combat, false, false, cond.Event, false));
@@ -152,7 +153,18 @@ internal sealed class CardValidator
                 Err(ErrorCodes.UnknownTrigger, $"{ap}.trigger", $"неизвестный триггер «{a.Trigger}»");
                 continue;
             }
-            bool creatureSource = owner != Owner.Field;
+            // Q5: у чар на поле способность «этого существа» выдаётся существам — её источник существо.
+            if (owner == Owner.Field && t.PerCreature && a.Watch == null)
+                Err(ErrorCodes.MissingField, $"{ap}.watch", $"у чар на поле триггер «{t.Id}» выдаётся существам — нужен фильтр watch");
+            if (a.Watch != null && !(owner == Owner.Field && t.PerCreature))
+                Err(ErrorCodes.FieldNotAllowed, $"{ap}.watch", "watch бывает только у способностей чар на поле с триггером «этого существа»");
+            if (a.Watch != null)
+            {
+                CheckKeyword(a.Watch.Keyword, $"{ap}.watch.keyword");
+                CheckKeyword(a.Watch.NoKeyword, $"{ap}.watch.no_keyword");
+                CheckTag(a.Watch.Tag, $"{ap}.watch.tag");
+            }
+            bool creatureSource = owner != Owner.Field || t.PerCreature;
 
             if (t.NeedsCount && a.Count == null) Err(ErrorCodes.MissingField, $"{ap}.count", $"триггеру «{t.Id}» нужен count");
             if (!t.NeedsCount && a.Count != null) Err(ErrorCodes.FieldNotAllowed, $"{ap}.count", $"у триггера «{t.Id}» нет count");

@@ -128,11 +128,12 @@ internal sealed class Resolver
             for (int i = 0; i < def.Abilities.Count; i++)
             {
                 var a = def.Abilities[i];
-                if (a.Trigger != trigger) continue;
+                // Способности «этого существа» с watch выданы существам и срабатывают у них (Q5).
+                if (a.Trigger != trigger || a.Watch != null) continue;
                 Enqueue(new PendingTrigger
                 {
                     Side = side, SourceCardId = def.Id, SourceInstanceId = ench,
-                    Ability = new AbilityRef(a, i, null), Effects = a.Effects, EventTarget = eventTarget,
+                    Ability = new AbilityRef(a, i, AbilitySource.Field, ench, i), Effects = a.Effects, EventTarget = eventTarget,
                 });
             }
         }
@@ -156,7 +157,7 @@ internal sealed class Resolver
     /// <summary>
     /// Секреты стороны с условием condition, в порядке розыгрыша (9.2). Только в бою.
     /// Секрет помечается сработавшим, когда встаёт в очередь, и больше в очередь не ставится (9.1).
-    /// Фильтр условия проверяет участника события event_target.
+    /// Фильтры условия: target — участник event_target, attacker — участник event_attacker.
     /// </summary>
     public void EnqueueSecrets(Side side, string condition, int? eventTarget = null, int? eventAttacker = null)
     {
@@ -167,7 +168,8 @@ internal sealed class Resolver
             var def = _db.Get(p.GetInstance(inst).CardId);
             if (def.Type != CardType.Secret || def.Condition!.Event != condition) continue;
             if (SpentCards[(int)side].Contains(inst)) continue;
-            if (def.Condition.Target is { } filter && !FilterMatches(filter, eventTarget)) continue;
+            if (def.Condition.Target is { } byTarget && !FilterMatches(byTarget, eventTarget)) continue;
+            if (def.Condition.Attacker is { } byAttacker && !FilterMatches(byAttacker, eventAttacker)) continue;
             SpentCards[(int)side].Add(inst);
             Enqueue(new PendingTrigger
             {
@@ -177,7 +179,7 @@ internal sealed class Resolver
         }
     }
 
-    // GDD-QUESTION: фильтр условия секрета проверяет event_target — атакованное или погибшее существо (Q10).
+    /// <summary>Участника нет (или он исчез) — фильтр не пройден.</summary>
     private bool FilterMatches(FilterDef filter, int? participant)
     {
         if (participant is not int id || FindAliveAnywhere(id) is not { } c) return false;
@@ -346,22 +348,23 @@ internal sealed class Resolver
         }
     }
 
-    /// <summary>Перерождение: базовая копия карты без усилений и без Перерождения, здоровье 1, на месте погибшего.</summary>
+    /// <summary>
+    /// Перерождение: базовая копия карты без усилений и без Перерождения, здоровье 1, на месте погибшего.
+    /// На полном столе копия всё равно возвращается и сразу погибает — со всеми триггерами смерти (8.8).
+    /// </summary>
     private void ResolveReborn(PendingTrigger t)
     {
         var p = Side(t.Side);
         var original = t.SourceCreature!;
         int index = p.Board.IndexOf(original);
-        // GDD-QUESTION: Перерождение на полном столе не происходит и даёт summon_failed, как призыв (Q9).
-        if (index < 0 || p.AliveCount >= _config.BoardSize)
-        {
-            Events.Add(new GameEvent { Type = EventTypes.SummonFailed, Side = p.Side, CardId = original.CardId, Reason = "board_full" });
-            return;
-        }
+        if (index < 0) index = p.Board.Count;
+        bool noRoom = p.AliveCount >= _config.BoardSize;
         var c = NewEntity(p, original.CardId);
         c.RemovedKeywords = new List<string> { Registry.Keywords.Reborn };
         c.Damage = Stats.MaxHealth(_db, c) - 1;
         p.Board.Insert(index, c);
+        // Смерть обработается сразу после разрешения этого триггера (9.1).
+        if (noRoom) c.MarkedForDestroy = true;
         Events.Add(new GameEvent
         {
             Type = EventTypes.Reborn, Side = p.Side, EntityId = c.EntityId, SourceEntityId = original.EntityId,
@@ -388,7 +391,7 @@ internal sealed class Resolver
     {
         if (Phase == Phase.Planning) return Entities.NewCreature(p, cardId, null);
         int id = -(_combatSeq[(int)p.Side]++ * 2 + (int)p.Side);
-        return new Creature { EntityId = id, CardId = cardId };
+        return new Creature { EntityId = id, CardId = cardId, Timestamp = Entities.Stamp(p) };
     }
 
     // ---------- Урон (8.7) ----------
@@ -594,8 +597,7 @@ internal sealed class Resolver
         switch (at)
         {
             case Registry.Placements.DeathPosition when sourceIndex >= 0:
-                // Вплотную слева от надгробия.
-                // GDD-QUESTION: если источник жив (death_position не из «Посмертно»), встаём слева от него (Q8).
+                // Вплотную слева от надгробия; если источник жив — вплотную слева от него (8.8).
                 return sourceIndex;
             case Registry.Placements.RightOfSelf when sourceIndex >= 0:
                 // У погибшего источника работает как death_position (11.2).

@@ -68,8 +68,7 @@ public sealed class Bot
     /// </summary>
     private Dismiss? DismissForBetterCreature(MatchState state, PlayerState p)
     {
-        // GDD-QUESTION: правило проверяется до оценки действий в каждой итерации, даже когда других
-        // допустимых действий из таблицы нет — иначе на полном столе с одними существами в руке оно не срабатывает (Q11).
+        // 12.4: правило проверяется в начале каждой итерации, даже когда других допустимых действий из таблицы нет.
         if (p.AliveCount < state.Config.BoardSize) return null;
         var payable = p.Hand.Select(id => _db.Get(p.GetInstance(id).CardId))
             .Where(d => d.Type == CardType.Creature && d.Cost <= p.Mana)
